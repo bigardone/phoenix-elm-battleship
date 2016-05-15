@@ -2,12 +2,13 @@ defmodule Battleship.LobbyChannel do
   @moduledoc """
   Lobby channel
   """
+  require Logger
 
   use Battleship.Web, :channel
   alias Battleship.Game.Supervisor, as: GameSupervisor
 
   def join("lobby", _msg, socket) do
-    {:ok, %{games: GameSupervisor.current_games}, socket}
+    {:ok, socket}
   end
 
   def handle_in("current_games", _params, socket) do
@@ -22,6 +23,8 @@ defmodule Battleship.LobbyChannel do
   end
 
   def broadcast_current_games do
+    Logger.debug "Broadcasting current games from LobbyChannel"
+    
     Battleship.Endpoint.broadcast("lobby", "update_games", %{games: GameSupervisor.current_games})
   end
 end
