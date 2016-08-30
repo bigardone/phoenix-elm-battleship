@@ -22,11 +22,4 @@ page : Model -> Html Msg
 page model =
     case model.route of
         _ ->
-            indexView
-
-
-indexView : Html Msg
-indexView =
-    div []
-        [ text "Hello!"
-        ]
+            Home.View.view model
