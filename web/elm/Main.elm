@@ -1,8 +1,11 @@
 module Main exposing (..)
 
+import Phoenix.Socket
 import Navigation
 import View exposing (view)
 import Model exposing (..)
+import Home.Model as HomeModel
+import Game.Model as GameModel
 import Update exposing (..)
 import Types exposing (Msg(..))
 import Routing exposing (..)
@@ -17,9 +20,18 @@ init result =
         urlUpdate result (initialModel currentRoute)
 
 
+initialModel : Routing.Route -> Model
+initialModel route =
+    { phoenixSocket = initPhxSocket
+    , route = route
+    , home = HomeModel.initialModel
+    , game = GameModel.initialModel
+    }
+
+
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    Sub.none
+    Phoenix.Socket.listen model.phoenixSocket PhoenixMsg
 
 
 urlUpdate : Result String Route -> Model -> ( Model, Cmd Msg )
