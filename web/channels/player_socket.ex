@@ -26,7 +26,9 @@ defmodule Battleship.PlayerSocket do
   def connect(%{"id" => player_id}, socket) do
     {:ok, assign(socket, :player_id, player_id)}
   end
-  def connect(_, _socket), do: :error
+  def connect(_, socket) do
+    {:ok, assign(socket, :player_id, Battleship.generate_player_id)}
+  end
 
   # Socket id's are topics that allow you to identify all sockets for a given user:
   #
