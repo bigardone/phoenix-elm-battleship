@@ -53,6 +53,7 @@ exports.config = {
   // Configure your plugins
   plugins: {
     babel: {
+      presets: ['es2015', 'react', 'stage-2', 'stage-0'],
       // Do not use ES6 compiler in vendor code
       ignore: [/web\/static\/vendor/],
     },
@@ -65,6 +66,7 @@ exports.config = {
        plugins: {
          stylus: ['nib'],
        },
+       linenos: true,
      },
   },
 
@@ -76,6 +78,22 @@ exports.config = {
 
   npm: {
     enabled: true,
+    whitelist: [
+      'classnames',
+      'history',
+      'invariant',
+      'phoenix',
+      'phoenix_html',
+      'react',
+      'react-addons-css-transition-group',
+      'react-dom',
+      'react-redux',
+      'react-router',
+      'react-router-redux',
+      'redux',
+      'redux-logger',
+      'redux-thunk',
+    ],
      styles: {
        'normalize.css': ['normalize.css']
      }
