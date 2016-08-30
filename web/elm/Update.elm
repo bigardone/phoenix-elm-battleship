@@ -1,6 +1,7 @@
 module Update exposing (..)
 
 import Phoenix.Socket
+import Phoenix.Channel
 import Model exposing (..)
 import Types exposing (..)
 
@@ -8,11 +9,20 @@ import Types exposing (..)
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        NoOp ->
-            model ! []
-
         ConnectSocket ->
-            { model | phoenixSocket = Just initPhxSocket } ! []
+            { model | phoenixSocket = initPhxSocket } ! []
+
+        JoinLobbyChannel ->
+            let
+                channel =
+                    Phoenix.Channel.init "lobby"
+
+                ( phoenixSocket, phxCmd ) =
+                    Phoenix.Socket.join channel model.phoenixSocket
+            in
+                ( { model | phoenixSocket = phoenixSocket }
+                , Cmd.map PhoenixMsg phxCmd
+                )
 
         PhoenixMsg msg ->
             model ! []

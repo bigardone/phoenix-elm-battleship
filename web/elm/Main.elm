@@ -23,6 +23,7 @@ init result =
 initialModel : Routing.Route -> Model
 initialModel route =
     { phoenixSocket = initPhxSocket
+    , connectedToLobby = False
     , route = route
     , home = HomeModel.initialModel
     , game = GameModel.initialModel
@@ -40,7 +41,16 @@ urlUpdate result model =
         currentRoute =
             Routing.routeFromResult result
     in
-        ( { model | route = currentRoute }, Cmd.none )
+        case currentRoute of
+            HomeIndexRoute ->
+                let
+                    ( updatedModel, cmd ) =
+                        update JoinLobbyChannel model
+                in
+                    ( { updatedModel | route = currentRoute, connectedToLobby = True }, cmd )
+
+            _ ->
+                ( { model | route = currentRoute }, Cmd.none )
 
 
 main : Program Never

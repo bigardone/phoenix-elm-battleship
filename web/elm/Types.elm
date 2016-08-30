@@ -4,6 +4,6 @@ import Phoenix.Socket
 
 
 type Msg
-    = NoOp
-    | ConnectSocket
+    = ConnectSocket
+    | JoinLobbyChannel
     | PhoenixMsg (Phoenix.Socket.Msg Msg)
