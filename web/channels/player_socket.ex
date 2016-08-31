@@ -9,7 +9,10 @@ defmodule Battleship.PlayerSocket do
   channel "game:*", Battleship.GameChannel
 
   ## Transports
-  transport :websocket, Phoenix.Transports.WebSocket
+  transport :websocket,
+    Phoenix.Transports.WebSocket,
+    timeout: :infinity
+
   # transport :longpoll, Phoenix.Transports.LongPoll
 
   # Socket params are passed from the client and can
@@ -26,9 +29,7 @@ defmodule Battleship.PlayerSocket do
   def connect(%{"id" => player_id}, socket) do
     {:ok, assign(socket, :player_id, player_id)}
   end
-  def connect(_, socket) do
-    {:ok, assign(socket, :player_id, Battleship.generate_player_id)}
-  end
+  def connect(_, socket), do: connect(%{"id" => Battleship.generate_player_id}, socket)
 
   # Socket id's are topics that allow you to identify all sockets for a given user:
   #
