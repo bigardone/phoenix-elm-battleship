@@ -1,24 +1,20 @@
 module Home.View exposing (..)
 
-import Model exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (..)
+import Home.Model as HomeModel exposing (..)
+import Game.Model as GameModel exposing (..)
 import Types exposing (..)
 
 
-view : a -> Html Msg
+view : HomeModel.Model -> Html Msg
 view model =
     div
         [ id "home_index"
         , class "view-container"
         ]
         [ headerView
-        , section []
-            [ h2 []
-                [ text "Current games" ]
-            , ul [ attribute "className" "current-games" ]
-                []
-            ]
+        , currentGames model
         , footerView
         ]
 
@@ -52,6 +48,58 @@ headerView =
             []
             [ text "Start new battle, arr!" ]
         ]
+
+
+currentGames : HomeModel.Model -> Html Msg
+currentGames model =
+    if List.length model.games == 0 then
+        section
+            []
+            [ text "No games" ]
+    else
+        section
+            []
+            [ h2
+                []
+                [ text "Current games" ]
+            , model.games
+                |> List.map gameView
+                |> ul
+                    [ attribute "class" "current-games" ]
+            ]
+
+
+gameView : GameModel.Model -> Html Msg
+gameView game =
+    let
+        gameInfo =
+            case game.defender of
+                Nothing ->
+                    (a
+                        [ class "button small" ]
+                        [ text "join" ]
+                    )
+
+                Just defender ->
+                    lastTurnView game
+    in
+        li
+            []
+            [ text (Maybe.withDefault "" game.id)
+            , gameInfo
+            ]
+
+
+lastTurnView : GameModel.Model -> Html Msg
+lastTurnView game =
+    case List.head game.turns of
+        Nothing ->
+            text ""
+
+        Just turn ->
+            ul
+                [ class "stats-list" ]
+                []
 
 
 footerView : Html Msg

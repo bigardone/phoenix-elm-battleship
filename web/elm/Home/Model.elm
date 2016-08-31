@@ -4,9 +4,9 @@ import Game.Model as Game exposing (Model)
 
 
 type alias Model =
-    { currentGames : List Game.Model }
+    { games : List Game.Model }
 
 
 initialModel : Model
 initialModel =
-    { currentGames = [] }
+    { games = [] }

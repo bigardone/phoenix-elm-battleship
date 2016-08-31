@@ -22,4 +22,4 @@ page : Model -> Html Msg
 page model =
     case model.route of
         _ ->
-            Home.View.view model
+            Home.View.view model.home

@@ -2,8 +2,11 @@ module Update exposing (..)
 
 import Phoenix.Socket
 import Phoenix.Channel
+import Json.Decode as JD
 import Model exposing (..)
 import Types exposing (..)
+import Home.Update exposing (..)
+import Decoders exposing (..)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -24,6 +27,25 @@ update msg model =
                 , Cmd.map PhoenixMsg phxCmd
                 )
 
+        HomeMsg subMsg ->
+            let
+                ( updatedHome, cmd ) =
+                    Home.Update.update subMsg model.home
+            in
+                ( { model | home = updatedHome }
+                , Cmd.map HomeMsg cmd
+                )
+
+        ReceiveCurrentGames raw ->
+            case JD.decodeValue homeModelDecoder raw of
+                Ok homeModel ->
+                    ( { model | home = homeModel }
+                    , Cmd.none
+                    )
+
+                Err error ->
+                    ( model, Cmd.none )
+
         PhoenixMsg msg ->
             model ! []
 
@@ -37,3 +59,5 @@ initPhxSocket : Phoenix.Socket.Socket Msg
 initPhxSocket =
     Phoenix.Socket.init socketServer
         |> Phoenix.Socket.withDebug
+        |> Phoenix.Socket.withHeartbeatInterval 10
+        |> Phoenix.Socket.on "update_games" "lobby" ReceiveCurrentGames
