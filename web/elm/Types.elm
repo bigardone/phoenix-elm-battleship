@@ -10,7 +10,8 @@ type Msg
     | JoinLobbyChannel
     | JoinGameChannel String
     | PhoenixMsg (Phoenix.Socket.Msg Msg)
-    | Home
+    | NavigateToHome
+    | NavigateToGame String
     | NotFound
     | HomeMsg Home.Types.Msg
     | FetchCurrentGames

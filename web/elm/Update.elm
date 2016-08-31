@@ -46,8 +46,11 @@ update msg model =
                 , Cmd.map PhoenixMsg phxCmd
                 )
 
-        Home ->
+        NavigateToHome ->
             ( model, Navigation.newUrl (toPath HomeIndexRoute) )
+
+        NavigateToGame id ->
+            ( model, Navigation.newUrl (toPath (GameShowRoute id)) )
 
         NotFound ->
             ( model, Navigation.newUrl (toPath NotFoundRoute) )

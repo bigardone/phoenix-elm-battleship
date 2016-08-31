@@ -71,14 +71,16 @@ currentGames model =
             ]
 
 
-gameView : GameModel.Model -> Html Msg
+gameView : GameModel.Game -> Html Msg
 gameView game =
     let
         gameInfo =
             case game.defender of
                 Nothing ->
                     (a
-                        [ class "button small" ]
+                        [ class "button small"
+                        , onClick (NavigateToGame (Maybe.withDefault "" game.id))
+                        ]
                         [ text "join" ]
                     )
 
@@ -92,7 +94,7 @@ gameView game =
             ]
 
 
-lastTurnView : GameModel.Model -> Html Msg
+lastTurnView : GameModel.Game -> Html Msg
 lastTurnView game =
     case List.head game.turns of
         Nothing ->

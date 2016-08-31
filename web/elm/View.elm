@@ -50,7 +50,7 @@ notFoundView =
         , p
             []
             [ a
-                [ onClick Home ]
+                [ onClick NavigateToHome ]
                 [ text "Back to home" ]
             ]
         ]
