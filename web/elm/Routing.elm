@@ -32,7 +32,7 @@ routeParser : Parser (Route -> a) a
 routeParser =
     oneOf
         [ format HomeIndexRoute (s "")
-        , format GameShowRoute (s "contacts" </> string)
+        , format GameShowRoute (s "game" </> string)
         ]
 
 

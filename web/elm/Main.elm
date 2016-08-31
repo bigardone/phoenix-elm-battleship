@@ -49,6 +49,13 @@ urlUpdate result model =
                 in
                     ( { updatedModel | route = currentRoute, connectedToLobby = True }, cmd )
 
+            GameShowRoute id ->
+                let
+                    ( updatedModel, cmd ) =
+                        update (JoinGameChannel id) model
+                in
+                    ( { updatedModel | route = currentRoute }, cmd )
+
             _ ->
                 ( { model | route = currentRoute }, Cmd.none )
 

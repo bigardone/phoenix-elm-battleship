@@ -12,9 +12,15 @@ homeModelDecoder =
         |: ("games" := (list gameDecoder))
 
 
-gameDecoder : JD.Decoder Game.Model.Model
-gameDecoder =
+gameModelDecoder : JD.Decoder Game.Model.Model
+gameModelDecoder =
     succeed Game.Model.Model
+        |: ("game" := gameDecoder)
+
+
+gameDecoder : JD.Decoder Game.Model.Game
+gameDecoder =
+    succeed Game.Model.Game
         |: (maybe ("id" := string))
         |: (maybe ("attacker" := string))
         |: (maybe ("defender" := string))
@@ -30,3 +36,9 @@ turnDecoder =
         |: ("x" := int)
         |: ("y" := int)
         |: ("result" := string)
+
+
+gameIdDecoder : JD.Decoder Game.Model.GameId
+gameIdDecoder =
+    succeed Game.Model.GameId
+        |: ("game_id" := string)
