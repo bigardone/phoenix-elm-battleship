@@ -10,4 +10,5 @@ type Msg
     | JoinLobbyChannel
     | PhoenixMsg (Phoenix.Socket.Msg Msg)
     | HomeMsg Home.Types.Msg
+    | FetchCurrentGames
     | ReceiveCurrentGames JE.Value

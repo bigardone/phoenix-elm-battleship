@@ -2,7 +2,9 @@ module Update exposing (..)
 
 import Phoenix.Socket
 import Phoenix.Channel
+import Phoenix.Push
 import Json.Decode as JD
+import Json.Encode as JE
 import Model exposing (..)
 import Types exposing (..)
 import Home.Update exposing (..)
@@ -19,6 +21,7 @@ update msg model =
             let
                 channel =
                     Phoenix.Channel.init "lobby"
+                        |> Phoenix.Channel.onJoin (always (FetchCurrentGames))
 
                 ( phoenixSocket, phxCmd ) =
                     Phoenix.Socket.join channel model.phoenixSocket
@@ -36,6 +39,21 @@ update msg model =
                 , Cmd.map HomeMsg cmd
                 )
 
+        FetchCurrentGames ->
+            let
+                push' =
+                    Phoenix.Push.init "current_games" "lobby"
+                        |> Phoenix.Push.onOk ReceiveCurrentGames
+
+                ( phoenixSocket, phxCmd ) =
+                    Phoenix.Socket.push push' model.phoenixSocket
+            in
+                ( { model
+                    | phoenixSocket = phoenixSocket
+                  }
+                , Cmd.map PhoenixMsg phxCmd
+                )
+
         ReceiveCurrentGames raw ->
             case JD.decodeValue homeModelDecoder raw of
                 Ok homeModel ->
@@ -47,7 +65,13 @@ update msg model =
                     ( model, Cmd.none )
 
         PhoenixMsg msg ->
-            model ! []
+            let
+                ( phoenixSocket, phxCmd ) =
+                    Phoenix.Socket.update msg model.phoenixSocket
+            in
+                ( { model | phoenixSocket = phoenixSocket }
+                , Cmd.map PhoenixMsg phxCmd
+                )
 
 
 socketServer : String
