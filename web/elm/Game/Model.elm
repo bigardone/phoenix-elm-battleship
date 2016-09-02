@@ -1,8 +1,21 @@
 module Game.Model exposing (..)
 
 
+type Orientation
+    = Horizontal
+    | Vertical
+
+
 type alias Model =
-    { game : Game }
+    { game : Game
+    , selectedShip : Ship
+    , messages : List String
+    , readyForBattle : Bool
+    , gameOver : Bool
+    , winnerId : Maybe String
+    , currentTurn : Maybe String
+    , error : Maybe String
+    }
 
 
 type alias Game =
@@ -27,6 +40,13 @@ type alias GameId =
     { game_id : String }
 
 
+type alias Ship =
+    { id : Maybe Int
+    , size : Int
+    , orientation : Orientation
+    }
+
+
 initialGame : Game
 initialGame =
     { id = Nothing
@@ -40,4 +60,12 @@ initialGame =
 
 initialModel : Model
 initialModel =
-    { game = initialGame }
+    { game = initialGame
+    , selectedShip = (Ship Nothing 0 Horizontal)
+    , messages = []
+    , readyForBattle = False
+    , gameOver = False
+    , winnerId = Nothing
+    , currentTurn = Nothing
+    , error = Nothing
+    }

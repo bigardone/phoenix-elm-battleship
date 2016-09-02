@@ -14,11 +14,7 @@ import Logo.View as LogoView
 
 view : Model -> Html Msg
 view model =
-    section
-        []
-        [ div []
-            [ page model ]
-        ]
+    page model
 
 
 page : Model -> Html Msg
