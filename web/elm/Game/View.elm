@@ -6,13 +6,15 @@ import Game.Model exposing (..)
 import Types exposing (..)
 
 
-view : Model -> Html Msg
-view model =
+view : String -> Model -> Html Msg
+view playerId model =
     div
         [ id "game_show"
         , class "view-container"
         ]
-        [ gameContent model ]
+        [ gameContent model
+        , chatView playerId model
+        ]
 
 
 gameContent : Model -> Html Msg
@@ -99,3 +101,42 @@ instructionsView model =
                 [ text "Good luck!" ]
             ]
         ]
+
+
+chatView : String -> Model -> Html Msg
+chatView playerId model =
+    let
+        opponentIsConnected =
+            case ( model.game.attacker, model.game.defender ) of
+                ( Just attackerId, Just defenderId ) ->
+                    True
+
+                _ ->
+                    False
+
+        statusText =
+            if opponentIsConnected == True then
+                "Opponent is connected"
+            else
+                "No opponnent yet connected"
+
+        classes =
+            classList [ ( "status", True ), ( "connected", opponentIsConnected ) ]
+    in
+        aside
+            [ id "chat_container" ]
+            [ header
+                []
+                [ p
+                    []
+                    [ i [ classes ] []
+                    , text statusText
+                    ]
+                ]
+            , div
+                [ class "messages-container" ]
+                [ text "{::this._renderMessages()}        " ]
+            , div
+                [ class "form-container" ]
+                []
+            ]
