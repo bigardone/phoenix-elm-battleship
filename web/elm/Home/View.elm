@@ -57,7 +57,7 @@ currentGames model =
     if List.length model.games == 0 then
         section
             []
-            [ text "No games" ]
+            []
     else
         section
             []
