@@ -18,6 +18,11 @@ type alias Model =
     }
 
 
+type alias GameResponse =
+    { game : Game
+    }
+
+
 type alias Game =
     { id : Maybe String
     , attacker : Maybe String

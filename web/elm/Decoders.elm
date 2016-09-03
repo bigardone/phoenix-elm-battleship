@@ -12,9 +12,9 @@ homeModelDecoder =
         |: ("games" := (list gameDecoder))
 
 
-gameModelDecoder : JD.Decoder Game.Model.Model
-gameModelDecoder =
-    succeed Game.Model.Model
+gameResponseDecoder : JD.Decoder Game.Model.GameResponse
+gameResponseDecoder =
+    succeed Game.Model.GameResponse
         |: ("game" := gameDecoder)
 
 
