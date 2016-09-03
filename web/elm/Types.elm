@@ -5,8 +5,12 @@ import Home.Types exposing (..)
 import Json.Encode as JE
 
 
+type alias Flags =
+    { playerId : String }
+
+
 type Msg
-    = ConnectSocket
+    = ConnectSocket String
     | JoinLobbyChannel
     | JoinGameChannel String
     | PhoenixMsg (Phoenix.Socket.Msg Msg)

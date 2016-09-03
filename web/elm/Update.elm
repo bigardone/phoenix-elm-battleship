@@ -4,7 +4,6 @@ import Phoenix.Socket
 import Phoenix.Channel
 import Phoenix.Push
 import Json.Decode as JD
-import Json.Encode as JE
 import Model exposing (..)
 import Types exposing (..)
 import Home.Update exposing (..)
@@ -16,8 +15,8 @@ import Routing exposing (toPath, Route(..))
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        ConnectSocket ->
-            { model | phoenixSocket = initPhxSocket } ! []
+        ConnectSocket playerId ->
+            { model | phoenixSocket = (initPhxSocket playerId) } ! []
 
         JoinLobbyChannel ->
             let
@@ -126,11 +125,21 @@ update msg model =
                 )
 
         ReceiveGameData raw ->
-            case JD.decodeValue gameModelDecoder raw of
-                Ok gameModel ->
-                    ( { model | game = gameModel }
-                    , Cmd.none
-                    )
+            case JD.decodeValue gameResponseDecoder raw of
+                Ok gameResponseModel ->
+                    let
+                        modelGame =
+                            model.game
+
+                        responseGame =
+                            gameResponseModel.game
+
+                        newModelGame =
+                            { modelGame | game = responseGame }
+                    in
+                        ( { model | game = newModelGame }
+                        , Cmd.none
+                        )
 
                 Err error ->
                     ( model, Navigation.newUrl (toPath HomeIndexRoute) )
@@ -145,14 +154,15 @@ update msg model =
                 )
 
 
-socketServer : String
-socketServer =
-    "ws://localhost:4000/socket/websocket"
+socketServer : String -> String
+socketServer playerId =
+    "ws://localhost:4000/socket/websocket?id=" ++ playerId
 
 
-initPhxSocket : Phoenix.Socket.Socket Msg
-initPhxSocket =
-    Phoenix.Socket.init socketServer
+initPhxSocket : String -> Phoenix.Socket.Socket Msg
+initPhxSocket playerId =
+    socketServer playerId
+        |> Phoenix.Socket.init
         |> Phoenix.Socket.withDebug
         |> Phoenix.Socket.withHeartbeatInterval 10
         |> Phoenix.Socket.on "update_games" "lobby" ReceiveCurrentGames

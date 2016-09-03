@@ -7,22 +7,26 @@ import Model exposing (..)
 import Home.Model as HomeModel
 import Game.Model as GameModel
 import Update exposing (..)
-import Types exposing (Msg(..))
+import Types exposing (Msg(..), Flags)
 import Routing exposing (..)
 
 
-init : Result String Route -> ( Model, Cmd Msg )
-init result =
+init : Flags -> Result String Route -> ( Model, Cmd Msg )
+init flags result =
     let
         currentRoute =
             Routing.routeFromResult result
+
+        model =
+            initialModel flags.playerId currentRoute
     in
-        urlUpdate result (initialModel currentRoute)
+        urlUpdate result model
 
 
-initialModel : Routing.Route -> Model
-initialModel route =
-    { phoenixSocket = initPhxSocket
+initialModel : String -> Routing.Route -> Model
+initialModel playerId route =
+    { playerId = playerId
+    , phoenixSocket = (initPhxSocket playerId)
     , connectedToLobby = False
     , route = route
     , home = HomeModel.initialModel
@@ -60,9 +64,9 @@ urlUpdate result model =
                 ( { model | route = currentRoute }, Cmd.none )
 
 
-main : Program Never
+main : Program Flags
 main =
-    Navigation.program Routing.parser
+    Navigation.programWithFlags Routing.parser
         { init = init
         , view = view
         , update = update
