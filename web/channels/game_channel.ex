@@ -17,20 +17,12 @@ defmodule Battleship.GameChannel do
       {:ok, pid} ->
         Process.monitor(pid)
 
+        send self, :after_join
+
         {:ok, assign(socket, :game_id, game_id)}
       {:error, reason} ->
         {:error, %{reason: reason}}
     end
-  end
-
-  def handle_in("game:joined", _message, socket) do
-    Logger.debug "Broadcasting player joined #{socket.assigns.game_id}"
-
-    player_id = socket.assigns.player_id
-    board = Board.get_opponents_data(player_id)
-
-    broadcast! socket, "game:player_joined", %{player_id: player_id, board: board}
-    {:noreply, socket}
   end
 
   def handle_in("game:get_data", _message, socket) do
@@ -118,6 +110,15 @@ defmodule Battleship.GameChannel do
     end
   end
 
+  def handle_info(:after_join, socket) do
+    Logger.debug "Broadcasting player joined #{socket.assigns.game_id}"
+
+    player_id = socket.assigns.player_id
+    board = Board.get_opponents_data(player_id)
+
+    broadcast! socket, "game:player_joined", %{player_id: player_id, board: board}
+    {:noreply, socket}
+  end
   def handle_info(_, socket), do: {:noreply, socket}
 
   def broadcast_stop(game_id) do
