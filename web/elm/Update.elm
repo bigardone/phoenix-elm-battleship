@@ -1,5 +1,6 @@
 module Update exposing (..)
 
+import String
 import Phoenix.Socket
 import Phoenix.Channel
 import Phoenix.Push
@@ -33,13 +34,18 @@ update msg model =
 
         JoinGameChannel id ->
             let
+                channelId =
+                    "game:" ++ id
+
                 channel =
-                    Phoenix.Channel.init ("game:" ++ id)
+                    Phoenix.Channel.init channelId
                         |> Phoenix.Channel.onJoin (always (GameData id))
                         |> Phoenix.Channel.onError (always NotFound)
 
                 ( phoenixSocket, phxCmd ) =
-                    Phoenix.Socket.join channel model.phoenixSocket
+                    model.phoenixSocket
+                        |> Phoenix.Socket.on "game:player_joined" channelId PlayerJoined
+                        |> Phoenix.Socket.join channel
             in
                 ( { model | phoenixSocket = phoenixSocket }
                 , Cmd.map PhoenixMsg phxCmd
@@ -144,6 +150,48 @@ update msg model =
                 Err error ->
                     ( model, Navigation.newUrl (toPath HomeIndexRoute) )
 
+        PlayerJoined raw ->
+            case JD.decodeValue playerJoinedResponseDecoder raw of
+                Ok playerJoinedModel ->
+                    let
+                        modelGame =
+                            model.game
+
+                        game =
+                            model.game.game
+
+                        playerId =
+                            playerJoinedModel.player_id
+
+                        attackerId =
+                            Maybe.withDefault "" game.attacker
+
+                        defenderId =
+                            Maybe.withDefault "" game.defender
+
+                        newGame =
+                            if String.length attackerId > 0 && String.contains attackerId playerId == False then
+                                { game
+                                    | defender = Just playerId
+                                    , opponents_board = Just playerJoinedModel.board
+                                }
+                            else
+                                game
+
+                        newModelGame =
+                            { modelGame | game = newGame }
+                    in
+                        ( { model | game = newModelGame }
+                        , Cmd.none
+                        )
+
+                Err error ->
+                    let
+                        _ =
+                            Debug.log "error" error
+                    in
+                        ( model, Cmd.none )
+
         PhoenixMsg msg ->
             let
                 ( phoenixSocket, phxCmd ) =
@@ -164,5 +212,5 @@ initPhxSocket playerId =
     socketServer playerId
         |> Phoenix.Socket.init
         |> Phoenix.Socket.withDebug
-        |> Phoenix.Socket.withHeartbeatInterval 10
+        |> Phoenix.Socket.withHeartbeatInterval 60
         |> Phoenix.Socket.on "update_games" "lobby" ReceiveCurrentGames

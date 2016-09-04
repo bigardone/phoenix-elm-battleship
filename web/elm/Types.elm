@@ -24,3 +24,4 @@ type Msg
     | RedirectToGame JE.Value
     | GameData String
     | ReceiveGameData JE.Value
+    | PlayerJoined JE.Value
