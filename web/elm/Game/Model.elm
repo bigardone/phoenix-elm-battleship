@@ -9,7 +9,7 @@ type Orientation
 type alias Model =
     { game : Game
     , selectedShip : Ship
-    , messages : List String
+    , messages : List ChatMessage
     , readyForBattle : Bool
     , gameOver : Bool
     , winnerId : Maybe String
@@ -170,6 +170,12 @@ type alias Grid =
     , c97 : String
     , c98 : String
     , c99 : String
+    }
+
+
+type alias ChatMessage =
+    { player_id : String
+    , text : String
     }
 
 

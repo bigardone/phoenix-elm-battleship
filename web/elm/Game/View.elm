@@ -2,6 +2,7 @@ module Game.View exposing (..)
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
+import Html.Events exposing (..)
 import Game.Model exposing (..)
 import Types exposing (..)
 
@@ -98,7 +99,7 @@ instructionsView playerId model =
                     , text " "
                     ]
             else
-                li [] []
+                span [] []
     in
         div [ id "opponents_board_container" ]
             [ header
@@ -162,10 +163,10 @@ chatView playerId model =
                 [ class "form-container" ]
                 [ div [ class "form-container" ]
                     [ Html.form
-                        [ attribute "onSubmit" "" ]
+                        [ onSubmit SendChatMessage ]
                         [ textarea
                             [ disabled (not opponentIsConnected)
-                            , attribute "onKeyUp" ""
+                            , onInput SetMessageText
                             , placeholder "Type message and hit intro..."
                             ]
                             []

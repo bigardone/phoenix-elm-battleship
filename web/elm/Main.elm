@@ -31,6 +31,7 @@ initialModel playerId route =
     , route = route
     , home = HomeModel.initialModel
     , game = GameModel.initialModel
+    , messageText = ""
     }
 
 

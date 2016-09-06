@@ -5,6 +5,7 @@ import Phoenix.Socket
 import Phoenix.Channel
 import Phoenix.Push
 import Json.Decode as JD
+import Json.Encode as JE
 import Model exposing (..)
 import Types exposing (..)
 import Home.Update exposing (..)
@@ -92,7 +93,7 @@ update msg model =
                     )
 
                 Err error ->
-                    ( model, Cmd.none )
+                    model ! []
 
         NewGame ->
             let
@@ -115,7 +116,7 @@ update msg model =
                     ( model, Navigation.newUrl (toPath (GameShowRoute gameId.game_id)) )
 
                 Err error ->
-                    ( model, Cmd.none )
+                    model ! []
 
         GameData id ->
             let
@@ -190,7 +191,46 @@ update msg model =
                         _ =
                             Debug.log "error" error
                     in
-                        ( model, Cmd.none )
+                        model ! []
+
+        SetMessageText text ->
+            { model | messageText = text } ! []
+
+        SendChatMessage ->
+            let
+                gameId =
+                    Maybe.withDefault "" model.game.game.id
+
+                payload =
+                    JE.object [ ( "body", JE.string model.messageText ) ]
+
+                push' =
+                    Phoenix.Push.init "game:send_message" ("game:" ++ gameId)
+                        |> Phoenix.Push.withPayload payload
+
+                ( phoenixSocket, phxCmd ) =
+                    Phoenix.Socket.push push' model.phoenixSocket
+            in
+                ( { model | messageText = "", phoenixSocket = phoenixSocket }
+                , Cmd.map PhoenixMsg phxCmd
+                )
+
+        ReceiveChatMessage raw ->
+            case JD.decodeValue chatMessageDecoder raw of
+                Ok chatMessage ->
+                    let
+                        game =
+                            model.game
+
+                        newGame =
+                            { game | messages = game.messages ++ [ chatMessage ] }
+                    in
+                        ( { model | game = newGame }
+                        , Cmd.none
+                        )
+
+                Err error ->
+                    model ! []
 
         PhoenixMsg msg ->
             let

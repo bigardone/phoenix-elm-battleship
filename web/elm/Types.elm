@@ -25,3 +25,6 @@ type Msg
     | GameData String
     | ReceiveGameData JE.Value
     | PlayerJoined JE.Value
+    | SetMessageText String
+    | SendChatMessage
+    | ReceiveChatMessage JE.Value

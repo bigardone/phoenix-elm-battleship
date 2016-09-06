@@ -14,4 +14,5 @@ type alias Model =
     , route : Routing.Route
     , home : HomeModel.Model
     , game : GameModel.Model
+    , messageText : String
     }

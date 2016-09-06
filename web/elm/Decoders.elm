@@ -174,3 +174,10 @@ playerJoinedResponseDecoder =
     succeed Game.Model.PlayerJoinedModel
         |: ("player_id" := string)
         |: ("board" := boardDecoder)
+
+
+chatMessageDecoder : JD.Decoder Game.Model.ChatMessage
+chatMessageDecoder =
+    succeed Game.Model.ChatMessage
+        |: ("player_id" := string)
+        |: ("test" := string)
