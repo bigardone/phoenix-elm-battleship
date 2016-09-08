@@ -8,14 +8,14 @@ import Game.Model exposing (..)
 import Types exposing (..)
 
 
-view : String -> Model -> Html Msg
-view playerId model =
+view : String -> String -> Model -> Html Msg
+view playerId messageText model =
     div
         [ id "game_show"
         , class "view-container"
         ]
         [ gameContent playerId model
-        , chatView playerId model
+        , chatView playerId messageText model
         ]
 
 
@@ -127,8 +127,8 @@ instructionsView playerId model =
             ]
 
 
-chatView : String -> Model -> Html Msg
-chatView playerId model =
+chatView : String -> String -> Model -> Html Msg
+chatView playerId messageText model =
     let
         opponentIsConnected =
             case ( model.game.attacker, model.game.defender ) of
@@ -166,11 +166,13 @@ chatView playerId model =
             , div
                 [ class "form-container" ]
                 [ div [ class "form-container" ]
-                    [ textarea
+                    [ input
                         [ disabled (not opponentIsConnected)
+                        , autofocus True
                         , onInput SetMessageText
                         , on "keypress" handleKeyPress
                         , placeholder "Type message and hit intro..."
+                        , value messageText
                         ]
                         []
                     ]
