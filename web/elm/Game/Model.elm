@@ -179,6 +179,10 @@ type alias ChatMessage =
     }
 
 
+type alias MessageReceivedModel =
+    { message : ChatMessage }
+
+
 initialGame : Game
 initialGame =
     { id = Nothing

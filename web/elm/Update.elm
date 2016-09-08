@@ -46,6 +46,7 @@ update msg model =
                 ( phoenixSocket, phxCmd ) =
                     model.phoenixSocket
                         |> Phoenix.Socket.on "game:player_joined" channelId PlayerJoined
+                        |> Phoenix.Socket.on "game:message_sent" channelId ReceiveChatMessage
                         |> Phoenix.Socket.join channel
             in
                 ( { model | phoenixSocket = phoenixSocket }
@@ -202,7 +203,7 @@ update msg model =
                     Maybe.withDefault "" model.game.game.id
 
                 payload =
-                    JE.object [ ( "body", JE.string model.messageText ) ]
+                    JE.object [ ( "text", JE.string model.messageText ) ]
 
                 push' =
                     Phoenix.Push.init "game:send_message" ("game:" ++ gameId)
@@ -216,21 +217,25 @@ update msg model =
                 )
 
         ReceiveChatMessage raw ->
-            case JD.decodeValue chatMessageDecoder raw of
+            case JD.decodeValue messageReceivedResponseDecoder raw of
                 Ok chatMessage ->
                     let
                         game =
                             model.game
 
                         newGame =
-                            { game | messages = game.messages ++ [ chatMessage ] }
+                            { game | messages = game.messages ++ [ chatMessage.message ] }
                     in
                         ( { model | game = newGame }
                         , Cmd.none
                         )
 
                 Err error ->
-                    model ! []
+                    let
+                        _ =
+                            Debug.log "error" error
+                    in
+                        model ! []
 
         PhoenixMsg msg ->
             let

@@ -180,4 +180,10 @@ chatMessageDecoder : JD.Decoder Game.Model.ChatMessage
 chatMessageDecoder =
     succeed Game.Model.ChatMessage
         |: ("player_id" := string)
-        |: ("test" := string)
+        |: ("text" := string)
+
+
+messageReceivedResponseDecoder : JD.Decoder Game.Model.MessageReceivedModel
+messageReceivedResponseDecoder =
+    succeed Game.Model.MessageReceivedModel
+        |: ("message" := chatMessageDecoder)

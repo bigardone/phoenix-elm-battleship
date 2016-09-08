@@ -1,6 +1,7 @@
 module Game.View exposing (..)
 
 import Html exposing (..)
+import Json.Decode as JD
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Game.Model exposing (..)
@@ -158,19 +159,44 @@ chatView playerId model =
                 ]
             , div
                 [ class "messages-container" ]
-                []
+                [ model.messages
+                    |> List.map (messageView playerId)
+                    |> ul []
+                ]
             , div
                 [ class "form-container" ]
                 [ div [ class "form-container" ]
-                    [ Html.form
-                        [ onSubmit SendChatMessage ]
-                        [ textarea
-                            [ disabled (not opponentIsConnected)
-                            , onInput SetMessageText
-                            , placeholder "Type message and hit intro..."
-                            ]
-                            []
+                    [ textarea
+                        [ disabled (not opponentIsConnected)
+                        , onInput SetMessageText
+                        , on "keypress" handleKeyPress
+                        , placeholder "Type message and hit intro..."
                         ]
+                        []
                     ]
                 ]
             ]
+
+
+messageView : String -> ChatMessage -> Html Msg
+messageView playerId message =
+    let
+        classes =
+            classList [ ( "mine", message.player_id == playerId ) ]
+    in
+        li
+            [ classes ]
+            [ span [] [ text message.text ] ]
+
+
+handleKeyPress : JD.Decoder Msg
+handleKeyPress =
+    JD.map (always (SendChatMessage)) (JD.customDecoder keyCode is13)
+
+
+is13 : Int -> Result String ()
+is13 code =
+    if code == 13 then
+        Ok ()
+    else
+        Err "not the right code"
