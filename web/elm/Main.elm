@@ -7,7 +7,7 @@ import Model exposing (..)
 import Home.Model as HomeModel
 import Game.Model as GameModel
 import Update exposing (..)
-import Types exposing (Msg(..), Flags)
+import Msg exposing (Msg(..), Flags)
 import Routing exposing (..)
 
 

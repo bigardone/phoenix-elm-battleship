@@ -5,7 +5,7 @@ import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Home.Model as HomeModel exposing (..)
 import Game.Model as GameModel exposing (..)
-import Types exposing (..)
+import Msg exposing (..)
 import Logo.View as LogoView
 
 

@@ -1,7 +1,6 @@
-module Types exposing (..)
+module Msg exposing (..)
 
 import Phoenix.Socket
-import Home.Types exposing (..)
 import Json.Encode as JE
 
 
@@ -17,7 +16,6 @@ type Msg
     | NavigateToHome
     | NavigateToGame String
     | NotFound
-    | HomeMsg Home.Types.Msg
     | FetchCurrentGames
     | ReceiveCurrentGames JE.Value
     | NewGame

@@ -5,7 +5,7 @@ import Json.Decode as JD
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Game.Model exposing (..)
-import Types exposing (..)
+import Msg exposing (..)
 
 
 view : String -> String -> Model -> Html Msg

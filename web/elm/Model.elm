@@ -1,7 +1,7 @@
 module Model exposing (..)
 
 import Phoenix.Socket
-import Types exposing (..)
+import Msg exposing (..)
 import Routing
 import Home.Model as HomeModel
 import Game.Model as GameModel

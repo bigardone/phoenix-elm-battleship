@@ -2,7 +2,7 @@ module Logo.View exposing (..)
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
-import Types exposing (..)
+import Msg exposing (..)
 
 
 view : Html Msg

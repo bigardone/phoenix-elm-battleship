@@ -7,8 +7,7 @@ import Phoenix.Push
 import Json.Decode as JD
 import Json.Encode as JE
 import Model exposing (..)
-import Types exposing (..)
-import Home.Update exposing (..)
+import Msg exposing (..)
 import Decoders exposing (..)
 import Navigation
 import Routing exposing (toPath, Route(..))
@@ -61,15 +60,6 @@ update msg model =
 
         NotFound ->
             ( model, Navigation.newUrl (toPath NotFoundRoute) )
-
-        HomeMsg subMsg ->
-            let
-                ( updatedHome, cmd ) =
-                    Home.Update.update subMsg model.home
-            in
-                ( { model | home = updatedHome }
-                , Cmd.map HomeMsg cmd
-                )
 
         FetchCurrentGames ->
             let
