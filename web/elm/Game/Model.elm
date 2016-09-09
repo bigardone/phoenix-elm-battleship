@@ -1,11 +1,6 @@
 module Game.Model exposing (..)
 
 
-type Orientation
-    = Horizontal
-    | Vertical
-
-
 type alias Model =
     { game : Game
     , selectedShip : Ship
@@ -57,6 +52,13 @@ type alias Ship =
     { id : Maybe Int
     , size : Int
     , orientation : String
+    , coordinates : Maybe Coordinates
+    }
+
+
+type alias Coordinates =
+    { x : Int
+    , y : Int
     }
 
 
@@ -199,7 +201,7 @@ initialGame =
 initialModel : Model
 initialModel =
     { game = initialGame
-    , selectedShip = (Ship Nothing 0 "horizontal")
+    , selectedShip = (Ship Nothing 0 "horizontal" Nothing)
     , messages = []
     , readyForBattle = False
     , gameOver = False

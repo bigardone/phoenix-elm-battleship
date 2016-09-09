@@ -62,6 +62,14 @@ shipDecoder =
         |: (maybe ("id" := int))
         |: ("size" := int)
         |: ("orientation" := string)
+        |: (maybe ("coordinates" := coordinatesDecoder))
+
+
+coordinatesDecoder : JD.Decoder Game.Model.Coordinates
+coordinatesDecoder =
+    succeed Game.Model.Coordinates
+        |: ("x" := int)
+        |: ("y" := int)
 
 
 gridDecoder : JD.Decoder Game.Model.Grid
