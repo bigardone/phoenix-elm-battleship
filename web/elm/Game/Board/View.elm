@@ -58,7 +58,7 @@ gridRowView : Model -> Int -> Html Msg
 gridRowView model y =
     let
         headerCell =
-            headerGridView (toString y)
+            headerGridView (toString (y + 1))
 
         rowCells =
             [0..9]
