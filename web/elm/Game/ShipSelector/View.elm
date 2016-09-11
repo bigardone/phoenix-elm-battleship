@@ -19,6 +19,7 @@ shipSelectorView model =
                     case myBoard.ships of
                         Just ships ->
                             ships
+                                |> List.indexedMap (,)
 
                         Nothing ->
                             []
@@ -36,24 +37,33 @@ shipSelectorView model =
                     [ text orientation ]
                 ]
             , myShips
-                |> List.map shipSelectorShip
+                |> List.map (\( shipId, ship ) -> shipSelectorShip model.selectedShip (shipId + 1) ship)
                 |> ul []
             ]
 
 
-shipSelectorShip : Ship -> Html Msg
-shipSelectorShip ship =
+shipSelectorShip : Ship -> Int -> Ship -> Html Msg
+shipSelectorShip selectedShip shipId ship =
     case ship.coordinates of
         Just coordinates ->
             div [] []
 
         Nothing ->
             let
+                newShip =
+                    { ship | id = Just shipId }
+
                 nodes =
                     [1..ship.size]
                         |> List.map (\i -> span [] [])
-                        |> div [ class "ship" ]
+                        |> div
+                            [ class "ship"
+                            , onClick (SelectShip newShip)
+                            ]
+
+                classes =
+                    classList [ ( "active", (shipId == (Maybe.withDefault 0 selectedShip.id)) ) ]
             in
                 li
-                    []
+                    [ classes ]
                     [ nodes ]

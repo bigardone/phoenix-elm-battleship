@@ -2,6 +2,7 @@ module Msg exposing (..)
 
 import Phoenix.Socket
 import Json.Encode as JE
+import Game.Model exposing (..)
 
 
 type alias Flags =
@@ -26,3 +27,4 @@ type Msg
     | SetMessageText String
     | SendChatMessage
     | ReceiveChatMessage JE.Value
+    | SelectShip Ship

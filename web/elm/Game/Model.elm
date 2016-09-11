@@ -201,7 +201,7 @@ initialGame =
 initialModel : Model
 initialModel =
     { game = initialGame
-    , selectedShip = (Ship Nothing 0 "horizontal" Nothing)
+    , selectedShip = (Ship Nothing 0 "vertical" Nothing)
     , messages = []
     , readyForBattle = False
     , gameOver = False

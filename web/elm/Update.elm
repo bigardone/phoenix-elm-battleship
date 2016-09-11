@@ -227,6 +227,33 @@ update msg model =
                     in
                         model ! []
 
+        SelectShip ship ->
+            let
+                game =
+                    model.game
+
+                shipId =
+                    ship.id
+
+                selectedShip =
+                    game.selectedShip
+
+                newShip =
+                    case ( shipId == selectedShip.id, selectedShip.orientation ) of
+                        ( True, "vertical" ) ->
+                            { ship | orientation = "horizontal" }
+
+                        ( True, "horizontal" ) ->
+                            { ship | orientation = "vertical" }
+
+                        _ ->
+                            { ship | orientation = "vertical" }
+
+                newGame =
+                    { game | selectedShip = newShip }
+            in
+                { model | game = newGame } ! []
+
         PhoenixMsg msg ->
             let
                 ( phoenixSocket, phxCmd ) =
