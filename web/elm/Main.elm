@@ -47,22 +47,22 @@ urlUpdate result model =
             Routing.routeFromResult result
     in
         case currentRoute of
-            HomeIndexRoute ->
+            GameShowRoute id ->
+                let
+                    ( updatedModel, cmd ) =
+                        update JoinLobbyChannel model
+
+                    ( updatedModel2, cmd2 ) =
+                        update (JoinGameChannel id) model
+                in
+                    ( { updatedModel2 | route = currentRoute }, cmd2 )
+
+            _ ->
                 let
                     ( updatedModel, cmd ) =
                         update JoinLobbyChannel model
                 in
                     ( { updatedModel | route = currentRoute, connectedToLobby = True }, cmd )
-
-            GameShowRoute id ->
-                let
-                    ( updatedModel, cmd ) =
-                        update (JoinGameChannel id) model
-                in
-                    ( { updatedModel | route = currentRoute }, cmd )
-
-            _ ->
-                ( { model | route = currentRoute }, Cmd.none )
 
 
 main : Program Flags
