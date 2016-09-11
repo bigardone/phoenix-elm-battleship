@@ -6,6 +6,7 @@ import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Game.Model exposing (..)
 import Msg exposing (..)
+import Game.Board.View as BoardView
 
 
 view : String -> String -> Model -> Html Msg
@@ -34,7 +35,7 @@ gameView playerId model =
         [ headerView model
         , section
             [ id "boards_container" ]
-            [ myBoardView model
+            [ BoardView.myBoardView model
             , opponentBoard playerId model
             ]
         ]
@@ -61,71 +62,6 @@ headerView model =
 resultView : Model -> Html Msg
 resultView model =
     div [] []
-
-
-myBoardView : Model -> Html Msg
-myBoardView model =
-    div
-        [ id "my_board_container" ]
-        [ header
-            []
-            [ h2 []
-                [ text "Your ships" ]
-            ]
-        , shipSelectorView model
-        ]
-
-
-shipSelectorView : Model -> Html Msg
-shipSelectorView model =
-    let
-        orientation =
-            model.selectedShip.orientation
-
-        myShips =
-            case model.game.my_board of
-                Just myBoard ->
-                    case myBoard.ships of
-                        Just ships ->
-                            ships
-
-                        Nothing ->
-                            []
-
-                Nothing ->
-                    []
-    in
-        div
-            [ id "ship_selector" ]
-            [ p
-                []
-                [ text "The current orientation is: "
-                , span
-                    [ class "orientation" ]
-                    [ text orientation ]
-                ]
-            , myShips
-                |> List.map shipSelectorShip
-                |> ul []
-            ]
-
-
-shipSelectorShip : Ship -> Html Msg
-shipSelectorShip ship =
-    case ship.coordinates of
-        Just coordinates ->
-            div [] []
-
-        Nothing ->
-            let
-                nodes =
-                    [1..ship.size]
-                        |> List.map (\i -> span [] [])
-                        |> div [ class "ship" ]
-            in
-                li
-                    []
-                    [ nodes ]
 
 
 opponentBoard : String -> Model -> Html Msg
