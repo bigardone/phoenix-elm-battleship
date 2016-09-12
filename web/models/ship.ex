@@ -8,7 +8,7 @@ defmodule Battleship.Ship do
     y: 0,
     size: 0,
     orientation: :vertical,
-    coordinates: nil
+    coordinates: %{}
   ]
 
   def coordinates(%{x: x, y: y, size: size, orientation: :vertical}) do

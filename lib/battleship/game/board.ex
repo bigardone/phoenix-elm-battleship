@@ -176,7 +176,7 @@ defmodule Battleship.Game.Board do
   # Builds cells for a given row
   defp build_rows(y, rows) do
     row = 0..@size - 1
-      |> Enum.reduce(rows, fn x, col -> ["c#{Enum.join([y, x], "")}" | col] end)
+      |> Enum.reduce(rows, fn x, col -> [Enum.join([y, x], "") | col] end)
 
     [row | rows]
   end
