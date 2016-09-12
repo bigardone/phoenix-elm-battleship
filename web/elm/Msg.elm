@@ -28,3 +28,6 @@ type Msg
     | SendChatMessage
     | ReceiveChatMessage JE.Value
     | SelectShip Ship
+    | PlaceShip Int Int
+    | SetGame JE.Value
+    | SetError JE.Value

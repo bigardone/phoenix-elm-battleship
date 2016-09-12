@@ -185,6 +185,10 @@ type alias MessageReceivedModel =
     { message : ChatMessage }
 
 
+type alias ErrorModel =
+    { reason : String }
+
+
 initialGame : Game
 initialGame =
     { id = Nothing
@@ -198,10 +202,15 @@ initialGame =
     }
 
 
+initialShip : Ship
+initialShip =
+    Ship Nothing 0 "vertical" Nothing
+
+
 initialModel : Model
 initialModel =
     { game = initialGame
-    , selectedShip = (Ship Nothing 0 "vertical" Nothing)
+    , selectedShip = initialShip
     , messages = []
     , readyForBattle = False
     , gameOver = False

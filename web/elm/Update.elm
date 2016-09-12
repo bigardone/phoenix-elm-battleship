@@ -7,6 +7,7 @@ import Phoenix.Push
 import Json.Decode as JD
 import Json.Encode as JE
 import Model exposing (..)
+import Game.Model exposing (initialShip)
 import Msg exposing (..)
 import Decoders exposing (..)
 import Navigation
@@ -253,6 +254,93 @@ update msg model =
                     { game | selectedShip = newShip }
             in
                 { model | game = newGame } ! []
+
+        PlaceShip y x ->
+            let
+                ship =
+                    model.game.selectedShip
+            in
+                case ship.id of
+                    Nothing ->
+                        model ! []
+
+                    Just shipId ->
+                        let
+                            gameId =
+                                Maybe.withDefault "" model.game.game.id
+
+                            selectedShip =
+                                model.game.selectedShip
+
+                            encodedShip =
+                                JE.object
+                                    [ ( "y", JE.int y )
+                                    , ( "x", JE.int x )
+                                    , ( "size", JE.int selectedShip.size )
+                                    , ( "orientation", JE.string selectedShip.orientation )
+                                    ]
+
+                            payload =
+                                JE.object [ ( "ship", encodedShip ) ]
+
+                            push' =
+                                Phoenix.Push.init "game:place_ship" ("game:" ++ gameId)
+                                    |> Phoenix.Push.onOk SetGame
+                                    |> Phoenix.Push.onError SetError
+                                    |> Phoenix.Push.withPayload payload
+
+                            ( phoenixSocket, phxCmd ) =
+                                Phoenix.Socket.push push' model.phoenixSocket
+                        in
+                            ( { model | messageText = "", phoenixSocket = phoenixSocket }
+                            , Cmd.map PhoenixMsg phxCmd
+                            )
+
+        SetGame raw ->
+            case JD.decodeValue gameResponseDecoder raw of
+                Ok game ->
+                    let
+                        modelGame =
+                            model.game
+
+                        newModelGame =
+                            { modelGame
+                                | game = game.game
+                                , selectedShip = initialShip
+                                , error = Nothing
+                            }
+                    in
+                        ( { model | game = newModelGame }
+                        , Cmd.none
+                        )
+
+                Err error ->
+                    let
+                        _ =
+                            Debug.log "error" error
+                    in
+                        model ! []
+
+        SetError raw ->
+            case JD.decodeValue errorResponseDecoder raw of
+                Ok error ->
+                    let
+                        modelGame =
+                            model.game
+
+                        newModelGame =
+                            { modelGame | error = Just error.reason }
+                    in
+                        ( { model | game = newModelGame }
+                        , Cmd.none
+                        )
+
+                Err error ->
+                    let
+                        _ =
+                            Debug.log "error" error
+                    in
+                        model ! []
 
         PhoenixMsg msg ->
             let

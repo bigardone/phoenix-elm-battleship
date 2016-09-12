@@ -195,3 +195,9 @@ messageReceivedResponseDecoder : JD.Decoder Game.Model.MessageReceivedModel
 messageReceivedResponseDecoder =
     succeed Game.Model.MessageReceivedModel
         |: ("message" := chatMessageDecoder)
+
+
+errorResponseDecoder : JD.Decoder Game.Model.ErrorModel
+errorResponseDecoder =
+    succeed Game.Model.ErrorModel
+        |: ("reason" := string)

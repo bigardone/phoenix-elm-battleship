@@ -62,7 +62,7 @@ gridRowView model y =
 
         rowCells =
             [0..9]
-                |> List.map gridCellView
+                |> List.map (gridCellView y)
 
         cells =
             headerCell :: rowCells
@@ -80,10 +80,14 @@ headerGridView value =
         [ text value ]
 
 
-gridCellView : Int -> Html Msg
-gridCellView x =
+gridCellView : Int -> Int -> Html Msg
+gridCellView y x =
     let
         classes =
             classList [ ( "cell", True ) ]
     in
-        div [ classes ] []
+        div
+            [ classes
+            , onClick (PlaceShip y x)
+            ]
+            []
