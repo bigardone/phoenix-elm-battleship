@@ -4,6 +4,7 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Array
+import Dict
 import Game.Model exposing (..)
 import Msg exposing (..)
 import Game.ShipSelector.View exposing (..)
@@ -20,6 +21,7 @@ myBoardView model =
             ]
         , shipSelectorView model
         , gridView model
+        , errorView model
         ]
 
 
@@ -60,9 +62,17 @@ gridRowView model y =
         headerCell =
             headerGridView (toString (y + 1))
 
+        myBoardGrid =
+            case model.game.my_board of
+                Just board ->
+                    board.grid
+
+                Nothing ->
+                    Dict.fromList []
+
         rowCells =
             [0..9]
-                |> List.map (gridCellView y)
+                |> List.map (\x -> gridCellView y x (Dict.get ((toString y) ++ (toString x)) myBoardGrid))
 
         cells =
             headerCell :: rowCells
@@ -80,14 +90,34 @@ headerGridView value =
         [ text value ]
 
 
-gridCellView : Int -> Int -> Html Msg
-gridCellView y x =
+gridCellView : Int -> Int -> Maybe String -> Html Msg
+gridCellView y x maybeValue =
     let
+        value =
+            Maybe.withDefault "" maybeValue
+
         classes =
-            classList [ ( "cell", True ) ]
+            classList
+                [ ( "cell", True )
+                , ( "ship", value == "/" )
+                , ( "ship-hit", value == "O" )
+                , ( "water-ship", value == "*" )
+                ]
     in
         div
             [ classes
             , onClick (PlaceShip y x)
             ]
             []
+
+
+errorView : Model -> Html Msg
+errorView model =
+    case model.error of
+        Nothing ->
+            div [] []
+
+        Just error ->
+            div
+                [ class "error" ]
+                [ text error ]
