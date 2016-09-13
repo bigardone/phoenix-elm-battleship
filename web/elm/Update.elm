@@ -248,7 +248,7 @@ update msg model =
                             { ship | orientation = "vertical" }
 
                         _ ->
-                            { ship | orientation = "vertical" }
+                            { ship | orientation = "horizontal" }
 
                 newGame =
                     { game | selectedShip = newShip }

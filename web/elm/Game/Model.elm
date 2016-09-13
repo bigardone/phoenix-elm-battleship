@@ -102,7 +102,7 @@ initialGame =
 
 initialShip : Ship
 initialShip =
-    Ship Nothing 0 "vertical" (Dict.fromList [])
+    Ship Nothing 0 "horizontal" (Dict.fromList [])
 
 
 initialModel : Model
