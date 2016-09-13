@@ -43,10 +43,14 @@ update msg model =
                         |> Phoenix.Channel.onJoin (always (GameData id))
                         |> Phoenix.Channel.onError (always NotFound)
 
+                playerId =
+                    model.playerId
+
                 ( phoenixSocket, phxCmd ) =
                     model.phoenixSocket
                         |> Phoenix.Socket.on "game:player_joined" channelId PlayerJoined
                         |> Phoenix.Socket.on "game:message_sent" channelId ReceiveChatMessage
+                        |> Phoenix.Socket.on ("game:player:" ++ playerId ++ ":opponents_board_changed") channelId OpponentsBoardUpdate
                         |> Phoenix.Socket.join channel
             in
                 ( { model | phoenixSocket = phoenixSocket }
@@ -334,6 +338,31 @@ update msg model =
                         ( { model | game = newModelGame }
                         , Cmd.none
                         )
+
+                Err error ->
+                    let
+                        _ =
+                            Debug.log "error" error
+                    in
+                        model ! []
+
+        OpponentsBoardUpdate raw ->
+            case JD.decodeValue opponentsBoardUpdatedResponseDecoder raw of
+                Ok opponentsBoard ->
+                    let
+                        modelGame =
+                            model.game
+
+                        modelGameGame =
+                            modelGame.game
+
+                        newModelGameGame =
+                            { modelGameGame | opponents_board = Just opponentsBoard.board }
+
+                        newModelGame =
+                            { modelGame | game = newModelGameGame }
+                    in
+                        ( { model | game = newModelGame }, Cmd.none )
 
                 Err error ->
                     let

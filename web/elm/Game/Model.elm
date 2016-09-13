@@ -16,8 +16,11 @@ type alias Model =
 
 
 type alias GameResponse =
-    { game : Game
-    }
+    { game : Game }
+
+
+type alias BoardResponse =
+    { board : Board }
 
 
 type alias PlayerJoinedModel =

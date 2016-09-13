@@ -89,3 +89,9 @@ errorResponseDecoder : JD.Decoder Game.Model.ErrorModel
 errorResponseDecoder =
     succeed Game.Model.ErrorModel
         |: ("reason" := string)
+
+
+opponentsBoardUpdatedResponseDecoder : JD.Decoder Game.Model.BoardResponse
+opponentsBoardUpdatedResponseDecoder =
+    succeed Game.Model.BoardResponse
+        |: ("board" := boardDecoder)

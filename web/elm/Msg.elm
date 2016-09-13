@@ -31,3 +31,4 @@ type Msg
     | PlaceShip Int Int
     | SetGame JE.Value
     | SetError JE.Value
+    | OpponentsBoardUpdate JE.Value
