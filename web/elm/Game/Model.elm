@@ -1,6 +1,6 @@
 module Game.Model exposing (..)
 
-import Dict
+import Dict exposing (..)
 
 
 type alias Model =
@@ -54,7 +54,7 @@ type alias Ship =
     { id : Maybe Int
     , size : Int
     , orientation : String
-    , coordinates : Maybe Coordinates
+    , coordinates : Dict String String
     }
 
 
@@ -67,7 +67,7 @@ type alias Coordinates =
 type alias Board =
     { player_id : String
     , ships : Maybe (List Ship)
-    , grid : Dict.Dict String String
+    , grid : Dict String String
     , ready : Bool
     , hit_points : Int
     }
@@ -102,7 +102,7 @@ initialGame =
 
 initialShip : Ship
 initialShip =
-    Ship Nothing 0 "vertical" Nothing
+    Ship Nothing 0 "vertical" (Dict.fromList [])
 
 
 initialModel : Model
