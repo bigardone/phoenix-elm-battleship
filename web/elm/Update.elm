@@ -316,13 +316,20 @@ update msg model =
                         readyForBattle =
                             isReadyForBattle newModelGameGame
 
+                        currentTurn =
+                            whoseTurnIs newModelGameGame
+
                         newModelGame =
                             { modelGame
                                 | game = newModelGameGame
                                 , readyForBattle = readyForBattle
+                                , currentTurn = currentTurn
                                 , selectedShip = initialShip
                                 , error = Nothing
                             }
+
+                        _ =
+                            Debug.log "newModelGame" newModelGame
                     in
                         ( { model | game = newModelGame }
                         , Cmd.none
@@ -372,8 +379,15 @@ update msg model =
                         readyForBattle =
                             isReadyForBattle newModelGameGame
 
+                        currentTurn =
+                            whoseTurnIs newModelGameGame
+
                         newModelGame =
-                            { modelGame | game = newModelGameGame, readyForBattle = readyForBattle }
+                            { modelGame
+                                | game = newModelGameGame
+                                , readyForBattle = readyForBattle
+                                , currentTurn = currentTurn
+                            }
                     in
                         ( { model | game = newModelGame }, Cmd.none )
 
@@ -402,6 +416,35 @@ isReadyForBattle game =
 
         _ ->
             False
+
+
+whoseTurnIs : Game.Model.Game -> Maybe String
+whoseTurnIs game =
+    if isReadyForBattle game then
+        let
+            gameTurns =
+                game.turns
+
+            lastTurn =
+                List.head gameTurns
+
+            attacker =
+                Maybe.withDefault "" game.attacker
+
+            defender =
+                Maybe.withDefault "" game.defender
+        in
+            case lastTurn of
+                Just turn ->
+                    if turn.player_id == attacker then
+                        Just defender
+                    else
+                        Just attacker
+
+                Nothing ->
+                    Just attacker
+    else
+        Nothing
 
 
 socketServer : String -> String
