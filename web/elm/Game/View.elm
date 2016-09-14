@@ -6,7 +6,8 @@ import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Game.Model exposing (..)
 import Msg exposing (..)
-import Game.Board.View as BoardView
+import Game.MyBoard.View as MyBoardView
+import Game.OpponentBoard.View as OpponentBoardView
 
 
 view : String -> String -> Model -> Html Msg
@@ -35,7 +36,7 @@ gameView playerId model =
         [ headerView model
         , section
             [ id "boards_container" ]
-            [ BoardView.myBoardView model
+            [ MyBoardView.view model
             , opponentBoard playerId model
             ]
         ]
@@ -69,12 +70,7 @@ opponentBoard playerId model =
     if model.readyForBattle == False then
         instructionsView playerId model
     else
-        div
-            [ id "opponents_board_container" ]
-            [ header
-                []
-                [ h2 [] [ text "Shooting grid" ] ]
-            ]
+        OpponentBoardView.view model
 
 
 instructionsView : String -> Model -> Html Msg

@@ -1,4 +1,4 @@
-module Game.Board.View exposing (..)
+module Game.MyBoard.View exposing (..)
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
@@ -10,18 +10,32 @@ import Msg exposing (..)
 import Game.ShipSelector.View exposing (..)
 
 
-myBoardView : Model -> Html Msg
-myBoardView model =
+view : Model -> Html Msg
+view model =
     div
         [ id "my_board_container" ]
         [ header
             []
-            [ h2 []
+            [ h2
+                []
                 [ text "Your ships" ]
             ]
         , shipSelectorView model
         , gridView model
         , errorView model
+        ]
+
+
+opponentsBoardView : Model -> Html Msg
+opponentsBoardView model =
+    div
+        [ id "opponents_board_container" ]
+        [ header
+            []
+            [ h2
+                []
+                [ text "Shooting grid" ]
+            ]
         ]
 
 
@@ -62,7 +76,7 @@ gridRowView model y =
         headerCell =
             headerGridView (toString (y + 1))
 
-        myBoardGrid =
+        grid =
             case model.game.my_board of
                 Just board ->
                     board.grid
@@ -72,7 +86,7 @@ gridRowView model y =
 
         rowCells =
             [0..9]
-                |> List.map (\x -> gridCellView y x (Dict.get ((toString y) ++ (toString x)) myBoardGrid))
+                |> List.map (\x -> gridCellView y x (Dict.get ((toString y) ++ (toString x)) grid))
 
         cells =
             headerCell :: rowCells
