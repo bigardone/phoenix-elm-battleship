@@ -307,9 +307,19 @@ update msg model =
                         modelGame =
                             model.game
 
+                        modelGameGame =
+                            modelGame.game
+
+                        newModelGameGame =
+                            game.game
+
+                        readyForBattle =
+                            isReadyForBattle newModelGameGame
+
                         newModelGame =
                             { modelGame
-                                | game = game.game
+                                | game = newModelGameGame
+                                , readyForBattle = readyForBattle
                                 , selectedShip = initialShip
                                 , error = Nothing
                             }
@@ -359,8 +369,11 @@ update msg model =
                         newModelGameGame =
                             { modelGameGame | opponents_board = Just opponentsBoard.board }
 
+                        readyForBattle =
+                            isReadyForBattle newModelGameGame
+
                         newModelGame =
-                            { modelGame | game = newModelGameGame }
+                            { modelGame | game = newModelGameGame, readyForBattle = readyForBattle }
                     in
                         ( { model | game = newModelGame }, Cmd.none )
 
@@ -379,6 +392,16 @@ update msg model =
                 ( { model | phoenixSocket = phoenixSocket }
                 , Cmd.map PhoenixMsg phxCmd
                 )
+
+
+isReadyForBattle : Game.Model.Game -> Bool
+isReadyForBattle game =
+    case ( game.my_board, game.opponents_board ) of
+        ( Just myBoard, Just opponentsBoard ) ->
+            myBoard.ready && opponentsBoard.ready
+
+        _ ->
+            False
 
 
 socketServer : String -> String
