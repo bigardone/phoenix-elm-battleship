@@ -10,7 +10,8 @@ type alias Flags =
 
 
 type Msg
-    = ConnectSocket String
+    = NoOp
+    | ConnectSocket String
     | JoinLobbyChannel
     | JoinGameChannel String
     | PhoenixMsg (Phoenix.Socket.Msg Msg)
@@ -32,3 +33,4 @@ type Msg
     | SetGame JE.Value
     | SetError JE.Value
     | OpponentsBoardUpdate JE.Value
+    | Shoot ( Int, Int )

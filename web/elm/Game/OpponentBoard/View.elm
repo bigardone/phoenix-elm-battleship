@@ -28,8 +28,11 @@ view playerId model =
 gridView : String -> Model -> Html Msg
 gridView playerId model =
     let
+        isItMyTurn =
+            isItPlayersTurn model.currentTurn playerId
+
         classes =
-            classList [ ( "grid", True ), ( "pointer", (isItPlayersTurn model.currentTurn playerId) ) ]
+            classList [ ( "grid", True ), ( "pointer", isItMyTurn ) ]
 
         gridRows =
             [0..9]
@@ -96,16 +99,26 @@ gridCellView y x maybeValue =
         value =
             Maybe.withDefault "" maybeValue
 
+        _ =
+            Debug.log "value" value
+
+        msg =
+            if value == "·" then
+                (Shoot ( y, x ))
+            else
+                NoOp
+
         classes =
             classList
                 [ ( "cell", True )
                 , ( "ship", value == "/" )
-                , ( "ship-hit", value == "O" )
-                , ( "water-ship", value == "*" )
+                , ( "ship-hit", value == "*" )
+                , ( "water-hit", value == "O" )
                 ]
     in
         div
             [ classes
+            , onClick msg
             ]
             []
 

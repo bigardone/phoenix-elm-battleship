@@ -12,11 +12,15 @@ import Msg exposing (..)
 import Decoders exposing (..)
 import Navigation
 import Routing exposing (toPath, Route(..))
+import Game.Helpers exposing (..)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
+        NoOp ->
+            model ! []
+
         ConnectSocket playerId ->
             { model | phoenixSocket = (initPhxSocket playerId) } ! []
 
@@ -51,6 +55,7 @@ update msg model =
                         |> Phoenix.Socket.on "game:player_joined" channelId PlayerJoined
                         |> Phoenix.Socket.on "game:message_sent" channelId ReceiveChatMessage
                         |> Phoenix.Socket.on ("game:player:" ++ playerId ++ ":opponents_board_changed") channelId OpponentsBoardUpdate
+                        |> Phoenix.Socket.on ("game:player:" ++ playerId ++ ":set_game") channelId SetGame
                         |> Phoenix.Socket.join channel
             in
                 ( { model | phoenixSocket = phoenixSocket }
@@ -84,9 +89,7 @@ update msg model =
         ReceiveCurrentGames raw ->
             case JD.decodeValue homeModelDecoder raw of
                 Ok homeModel ->
-                    ( { model | home = homeModel }
-                    , Cmd.none
-                    )
+                    { model | home = homeModel } ! []
 
                 Err error ->
                     model ! []
@@ -140,9 +143,7 @@ update msg model =
                         newModelGame =
                             { modelGame | game = responseGame }
                     in
-                        ( { model | game = newModelGame }
-                        , Cmd.none
-                        )
+                        { model | game = newModelGame } ! []
 
                 Err error ->
                     ( model, Navigation.newUrl (toPath HomeIndexRoute) )
@@ -178,9 +179,7 @@ update msg model =
                         newModelGame =
                             { modelGame | game = newGame }
                     in
-                        ( { model | game = newModelGame }
-                        , Cmd.none
-                        )
+                        { model | game = newModelGame } ! []
 
                 Err error ->
                     let
@@ -221,9 +220,7 @@ update msg model =
                         newGame =
                             { game | messages = game.messages ++ [ chatMessage.message ] }
                     in
-                        ( { model | game = newGame }
-                        , Cmd.none
-                        )
+                        { model | game = newGame } ! []
 
                 Err error ->
                     let
@@ -331,9 +328,7 @@ update msg model =
                         _ =
                             Debug.log "newModelGame" newModelGame
                     in
-                        ( { model | game = newModelGame }
-                        , Cmd.none
-                        )
+                        { model | game = newModelGame } ! []
 
                 Err error ->
                     let
@@ -352,9 +347,7 @@ update msg model =
                         newModelGame =
                             { modelGame | error = Just error.reason }
                     in
-                        ( { model | game = newModelGame }
-                        , Cmd.none
-                        )
+                        { model | game = newModelGame } ! []
 
                 Err error ->
                     let
@@ -389,7 +382,7 @@ update msg model =
                                 , currentTurn = currentTurn
                             }
                     in
-                        ( { model | game = newModelGame }, Cmd.none )
+                        { model | game = newModelGame } ! []
 
                 Err error ->
                     let
@@ -397,6 +390,32 @@ update msg model =
                             Debug.log "error" error
                     in
                         model ! []
+
+        Shoot ( y, x ) ->
+            if isItPlayersTurn model.game.currentTurn model.playerId then
+                let
+                    gameId =
+                        Maybe.withDefault "" model.game.game.id
+
+                    payload =
+                        JE.object
+                            [ ( "y", JE.int y )
+                            , ( "x", JE.int x )
+                            ]
+
+                    push' =
+                        Phoenix.Push.init "game:shoot" ("game:" ++ gameId)
+                            |> Phoenix.Push.onOk SetGame
+                            |> Phoenix.Push.withPayload payload
+
+                    ( phoenixSocket, phxCmd ) =
+                        Phoenix.Socket.push push' model.phoenixSocket
+                in
+                    ( { model | phoenixSocket = phoenixSocket }
+                    , Cmd.map PhoenixMsg phxCmd
+                    )
+            else
+                model ! []
 
         PhoenixMsg msg ->
             let

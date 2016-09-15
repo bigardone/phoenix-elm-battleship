@@ -114,8 +114,8 @@ gridCellView y x maybeValue =
             classList
                 [ ( "cell", True )
                 , ( "ship", value == "/" )
-                , ( "ship-hit", value == "O" )
-                , ( "water-ship", value == "*" )
+                , ( "water-hit", value == "O" )
+                , ( "ship-hit", value == "*" )
                 ]
     in
         div
