@@ -33,7 +33,7 @@ gameView : String -> Model -> Html Msg
 gameView playerId model =
     section
         [ id "main_section" ]
-        [ headerView model
+        [ headerView playerId model
         , section
             [ id "boards_container" ]
             [ MyBoardView.view model
@@ -42,13 +42,22 @@ gameView playerId model =
         ]
 
 
-headerView : Model -> Html Msg
-headerView model =
+headerView : String -> Model -> Html Msg
+headerView playerId model =
     let
         ( title, message ) =
             case model.game.my_board of
                 Just myBoard ->
-                    ( "Place your ships", "Use the instructions below" )
+                    if myBoard.ready == False then
+                        ( "Place your ships", "Use the instructions below" )
+                    else if boardIsReady model.game.opponents_board == False then
+                        ( "Waiting for opponent", "Battle will start as soon as your opponent is ready" )
+                    else if isItPlayersTurn model.currentTurn playerId then
+                        ( "Your turn!", "Click on your shooting grid to open fire!" )
+                    else if not (isItPlayersTurn model.currentTurn playerId) then
+                        ( "Your opponent's turn!", "Wait for your opponent to shoot..." )
+                    else
+                        ( "Let the battle begin", "Let the battle begin" )
 
                 _ ->
                     ( "", "" )
@@ -187,3 +196,18 @@ is13 code =
         Ok ()
     else
         Err "not the right code"
+
+
+boardIsReady : Maybe Board -> Bool
+boardIsReady board =
+    case board of
+        Just board ->
+            board.ready
+
+        Nothing ->
+            False
+
+
+isItPlayersTurn : Maybe String -> String -> Bool
+isItPlayersTurn currentTurn playerId =
+    Maybe.withDefault "" currentTurn == playerId
