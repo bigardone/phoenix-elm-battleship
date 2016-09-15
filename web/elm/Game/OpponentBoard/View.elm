@@ -99,9 +99,6 @@ gridCellView y x maybeValue =
         value =
             Maybe.withDefault "" maybeValue
 
-        _ =
-            Debug.log "value" value
-
         msg =
             if value == "·" then
                 (Shoot ( y, x ))
