@@ -7,10 +7,11 @@ import Array
 import Dict
 import Game.Model exposing (..)
 import Msg exposing (..)
+import Game.Helpers exposing (..)
 
 
-view : Model -> Html Msg
-view model =
+view : String -> Model -> Html Msg
+view playerId model =
     div
         [ id "opponents_board_container" ]
         [ header
@@ -19,16 +20,16 @@ view model =
                 []
                 [ text "Shooting grid" ]
             ]
-        , gridView model
+        , gridView playerId model
         , remainingHitPointsView model
         ]
 
 
-gridView : Model -> Html Msg
-gridView model =
+gridView : String -> Model -> Html Msg
+gridView playerId model =
     let
         classes =
-            classList [ ( "grid", True ) ]
+            classList [ ( "grid", True ), ( "pointer", (isItPlayersTurn model.currentTurn playerId) ) ]
 
         gridRows =
             [0..9]

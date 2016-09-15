@@ -8,6 +8,7 @@ import Game.Model exposing (..)
 import Msg exposing (..)
 import Game.MyBoard.View as MyBoardView
 import Game.OpponentBoard.View as OpponentBoardView
+import Game.Helpers exposing (..)
 
 
 view : String -> String -> Model -> Html Msg
@@ -46,21 +47,16 @@ headerView : String -> Model -> Html Msg
 headerView playerId model =
     let
         ( title, message ) =
-            case model.game.my_board of
-                Just myBoard ->
-                    if myBoard.ready == False then
-                        ( "Place your ships", "Use the instructions below" )
-                    else if boardIsReady model.game.opponents_board == False then
-                        ( "Waiting for opponent", "Battle will start as soon as your opponent is ready" )
-                    else if isItPlayersTurn model.currentTurn playerId then
-                        ( "Your turn!", "Click on your shooting grid to open fire!" )
-                    else if not (isItPlayersTurn model.currentTurn playerId) then
-                        ( "Your opponent's turn!", "Wait for your opponent to shoot..." )
-                    else
-                        ( "Let the battle begin", "Let the battle begin" )
-
-                _ ->
-                    ( "", "" )
+            if isBoardReady model.game.my_board == False then
+                ( "Place your ships", "Use the instructions below" )
+            else if isBoardReady model.game.opponents_board == False then
+                ( "Waiting for opponent", "Battle will start as soon as your opponent is ready" )
+            else if isItPlayersTurn model.currentTurn playerId then
+                ( "Your turn!", "Click on your shooting grid to open fire!" )
+            else if not (isItPlayersTurn model.currentTurn playerId) then
+                ( "Your turn!", "Click on your shooting grid to open fire!" )
+            else
+                ( "Let the battle begin", "Let the battle begin" )
     in
         header
             [ id "game_header" ]
@@ -79,7 +75,7 @@ opponentBoard playerId model =
     if model.readyForBattle == False then
         instructionsView playerId model
     else
-        OpponentBoardView.view model
+        OpponentBoardView.view playerId model
 
 
 instructionsView : String -> Model -> Html Msg
@@ -188,26 +184,3 @@ messageView playerId message =
 handleKeyPress : JD.Decoder Msg
 handleKeyPress =
     JD.map (always (SendChatMessage)) (JD.customDecoder keyCode is13)
-
-
-is13 : Int -> Result String ()
-is13 code =
-    if code == 13 then
-        Ok ()
-    else
-        Err "not the right code"
-
-
-boardIsReady : Maybe Board -> Bool
-boardIsReady board =
-    case board of
-        Just board ->
-            board.ready
-
-        Nothing ->
-            False
-
-
-isItPlayersTurn : Maybe String -> String -> Bool
-isItPlayersTurn currentTurn playerId =
-    Maybe.withDefault "" currentTurn == playerId
