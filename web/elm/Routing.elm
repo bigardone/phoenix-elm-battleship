@@ -33,6 +33,7 @@ routeParser =
     oneOf
         [ format HomeIndexRoute (s "")
         , format GameShowRoute (s "game" </> string)
+        , format GameErrorRoute (s "game-error")
         ]
 
 

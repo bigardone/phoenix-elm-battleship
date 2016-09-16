@@ -55,6 +55,7 @@ update msg model =
                         |> Phoenix.Socket.on "game:player_joined" channelId PlayerJoined
                         |> Phoenix.Socket.on "game:message_sent" channelId ReceiveChatMessage
                         |> Phoenix.Socket.on "game:over" channelId GameOver
+                        |> Phoenix.Socket.on "game:stopped" channelId ResetGame
                         |> Phoenix.Socket.on ("game:player:" ++ playerId ++ ":opponents_board_changed") channelId OpponentsBoardUpdate
                         |> Phoenix.Socket.on ("game:player:" ++ playerId ++ ":set_game") channelId SetGame
                         |> Phoenix.Socket.join channel
@@ -440,6 +441,19 @@ update msg model =
                             Debug.log "error" error
                     in
                         model ! []
+
+        ResetGame raw ->
+            let
+                gameId =
+                    Maybe.withDefault "" model.game.game.id
+
+                ( phoenixSocket, phxCmd ) =
+                    Phoenix.Socket.leave ("game:" ++ gameId) model.phoenixSocket
+
+                newModel =
+                    { model | phoenixSocket = phoenixSocket }
+            in
+                ( newModel, Navigation.newUrl (toPath GameErrorRoute) )
 
         PhoenixMsg msg ->
             let

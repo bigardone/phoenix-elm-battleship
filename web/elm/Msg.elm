@@ -35,3 +35,4 @@ type Msg
     | OpponentsBoardUpdate JE.Value
     | Shoot ( Int, Int )
     | GameOver JE.Value
+    | ResetGame JE.Value

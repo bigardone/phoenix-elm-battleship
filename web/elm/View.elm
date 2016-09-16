@@ -26,6 +26,9 @@ page model =
         NotFoundRoute ->
             notFoundView
 
+        GameErrorRoute ->
+            gameErrorView
+
         _ ->
             Home.View.view model.home
 
@@ -40,6 +43,28 @@ notFoundView =
         , h1
             []
             [ text "Yo Ho Ho, game not found!" ]
+        , button
+            [ onClick NewGame ]
+            [ text "Start new battle, arr!" ]
+        , p
+            []
+            [ a
+                [ onClick NavigateToHome ]
+                [ text "Back to home" ]
+            ]
+        ]
+
+
+gameErrorView : Html Msg
+gameErrorView =
+    div
+        [ id "not_found"
+        , class "view-container"
+        ]
+        [ LogoView.view
+        , h1
+            []
+            [ text "Blow me down, game error!" ]
         , button
             [ onClick NewGame ]
             [ text "Start new battle, arr!" ]
