@@ -34,3 +34,4 @@ type Msg
     | SetError JE.Value
     | OpponentsBoardUpdate JE.Value
     | Shoot ( Int, Int )
+    | GameOver JE.Value

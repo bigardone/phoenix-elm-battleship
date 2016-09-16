@@ -54,6 +54,7 @@ update msg model =
                     model.phoenixSocket
                         |> Phoenix.Socket.on "game:player_joined" channelId PlayerJoined
                         |> Phoenix.Socket.on "game:message_sent" channelId ReceiveChatMessage
+                        |> Phoenix.Socket.on "game:over" channelId GameOver
                         |> Phoenix.Socket.on ("game:player:" ++ playerId ++ ":opponents_board_changed") channelId OpponentsBoardUpdate
                         |> Phoenix.Socket.on ("game:player:" ++ playerId ++ ":set_game") channelId SetGame
                         |> Phoenix.Socket.join channel
@@ -324,9 +325,6 @@ update msg model =
                                 , selectedShip = initialShip
                                 , error = Nothing
                             }
-
-                        _ =
-                            Debug.log "newModelGame" newModelGame
                     in
                         { model | game = newModelGame } ! []
 
@@ -416,6 +414,32 @@ update msg model =
                     )
             else
                 model ! []
+
+        GameOver raw ->
+            case JD.decodeValue gameResponseDecoder raw of
+                Ok response ->
+                    let
+                        modelGame =
+                            model.game
+
+                        newModelGame =
+                            if modelGame.gameOver then
+                                { modelGame | game = response.game }
+                            else
+                                { modelGame
+                                    | game = response.game
+                                    , winnerId = response.game.winner
+                                    , gameOver = True
+                                }
+                    in
+                        { model | game = newModelGame } ! []
+
+                Err error ->
+                    let
+                        _ =
+                            Debug.log "error" error
+                    in
+                        model ! []
 
         PhoenixMsg msg ->
             let

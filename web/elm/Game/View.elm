@@ -9,6 +9,7 @@ import Msg exposing (..)
 import Game.MyBoard.View as MyBoardView
 import Game.OpponentBoard.View as OpponentBoardView
 import Game.Helpers exposing (..)
+import Logo.View as Logo
 
 
 view : String -> String -> Model -> Html Msg
@@ -24,10 +25,10 @@ view playerId messageText model =
 
 gameContent : String -> Model -> Html Msg
 gameContent playerId model =
-    if model.game.over == False then
-        gameView playerId model
+    if model.gameOver then
+        resultView playerId model
     else
-        resultView model
+        gameView playerId model
 
 
 gameView : String -> Model -> Html Msg
@@ -65,9 +66,45 @@ headerView playerId model =
             ]
 
 
-resultView : Model -> Html Msg
-resultView model =
-    div [] []
+resultView : String -> Model -> Html Msg
+resultView playerId model =
+    let
+        message =
+            if playerId == Maybe.withDefault "" model.winnerId then
+                "Yo Ho Ho, victory is yours!"
+            else
+                "You got wrecked, landlubber!"
+
+        twitterMessage =
+            if playerId == Maybe.withDefault "" model.winnerId then
+                "Yo Ho Ho, I won a battle at Phoenix Battleship"
+            else
+                "I got wrecked at Phoenix Battleship"
+    in
+        div [ id "game_result" ]
+            [ header
+                []
+                [ Logo.view
+                , h1
+                    []
+                    [ text "Game over" ]
+                , p
+                    []
+                    [ text message ]
+                , a
+                    [ class "twitter-hashtag-button"
+                    , href ("https://twitter.com/intent/tweet?url=https://phoenix-battleship.herokuapp.com&button_hashtag=myelixirstatus&text=" ++ twitterMessage)
+                    ]
+                    [ i
+                        [ class "fa fa-twitter" ]
+                        []
+                    , text " Share result"
+                    ]
+                ]
+            , a
+                [ onClick NavigateToHome ]
+                [ text "Back to home" ]
+            ]
 
 
 opponentBoard : String -> Model -> Html Msg
