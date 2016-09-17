@@ -56,11 +56,15 @@ update msg model =
                         |> Phoenix.Socket.on "game:message_sent" channelId ReceiveChatMessage
                         |> Phoenix.Socket.on "game:over" channelId GameOver
                         |> Phoenix.Socket.on "game:stopped" channelId ResetGame
+                        |> Phoenix.Socket.on "game:player_left" channelId PlayerLeft
                         |> Phoenix.Socket.on ("game:player:" ++ playerId ++ ":opponents_board_changed") channelId OpponentsBoardUpdate
                         |> Phoenix.Socket.on ("game:player:" ++ playerId ++ ":set_game") channelId SetGame
                         |> Phoenix.Socket.join channel
             in
-                ( { model | phoenixSocket = phoenixSocket }
+                ( { model
+                    | phoenixSocket = phoenixSocket
+                    , game = Game.Model.initialModel
+                  }
                 , Cmd.map PhoenixMsg phxCmd
                 )
 
@@ -451,9 +455,52 @@ update msg model =
                     Phoenix.Socket.leave ("game:" ++ gameId) model.phoenixSocket
 
                 newModel =
-                    { model | phoenixSocket = phoenixSocket }
+                    { model
+                        | phoenixSocket = phoenixSocket
+                        , game = Game.Model.initialModel
+                    }
             in
                 ( newModel, Navigation.newUrl (toPath GameErrorRoute) )
+
+        LeaveGameChannel gameId ->
+            let
+                ( phoenixSocket, phxCmd ) =
+                    Phoenix.Socket.leave ("game:" ++ gameId) model.phoenixSocket
+            in
+                ( { model
+                    | phoenixSocket = phoenixSocket
+                    , game = Game.Model.initialModel
+                  }
+                , Cmd.map PhoenixMsg phxCmd
+                )
+
+        PlayerLeft raw ->
+            case JD.decodeValue playerLeftResponseDecoder raw of
+                Ok response ->
+                    let
+                        modelGame =
+                            model.game
+
+                        modelGameGame =
+                            modelGame.game
+
+                        newModelGameGame =
+                            if (Maybe.withDefault "" modelGameGame.attacker) == response.player_id then
+                                { modelGameGame | attacker = Nothing }
+                            else
+                                { modelGameGame | defender = Nothing }
+
+                        newModelGame =
+                            { modelGame | game = newModelGameGame }
+                    in
+                        { model | game = newModelGame } ! []
+
+                Err error ->
+                    let
+                        _ =
+                            Debug.log "error" error
+                    in
+                        model ! []
 
         PhoenixMsg msg ->
             let

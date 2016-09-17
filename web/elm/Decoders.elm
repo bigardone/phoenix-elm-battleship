@@ -95,3 +95,9 @@ opponentsBoardUpdatedResponseDecoder : JD.Decoder Game.Model.BoardResponse
 opponentsBoardUpdatedResponseDecoder =
     succeed Game.Model.BoardResponse
         |: ("board" := boardDecoder)
+
+
+playerLeftResponseDecoder : JD.Decoder Game.Model.PlayerIdModel
+playerLeftResponseDecoder =
+    succeed Game.Model.PlayerIdModel
+        |: ("player_id" := string)

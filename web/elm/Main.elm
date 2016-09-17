@@ -60,7 +60,12 @@ urlUpdate result model =
             _ ->
                 let
                     ( updatedModel, cmd ) =
-                        update JoinLobbyChannel model
+                        case model.route of
+                            GameShowRoute id ->
+                                update (LeaveGameChannel id) model
+
+                            _ ->
+                                update JoinLobbyChannel model
                 in
                     ( { updatedModel | route = currentRoute, connectedToLobby = True }, cmd )
 

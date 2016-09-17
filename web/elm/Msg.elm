@@ -36,3 +36,5 @@ type Msg
     | Shoot ( Int, Int )
     | GameOver JE.Value
     | ResetGame JE.Value
+    | LeaveGameChannel String
+    | PlayerLeft JE.Value

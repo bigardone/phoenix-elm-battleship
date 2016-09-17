@@ -15,6 +15,10 @@ type alias Model =
     }
 
 
+type alias PlayerIdModel =
+    { player_id : String }
+
+
 type alias GameResponse =
     { game : Game }
 
