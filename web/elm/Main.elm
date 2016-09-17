@@ -45,29 +45,38 @@ urlUpdate result model =
     let
         currentRoute =
             Routing.routeFromResult result
+
+        ( updatedModel, joinGameChannelCmd ) =
+            update JoinLobbyChannel model
+
+        commands =
+            [ joinGameChannelCmd ]
     in
         case currentRoute of
             GameShowRoute id ->
                 let
-                    ( updatedModel, cmd ) =
-                        update JoinLobbyChannel model
-
                     ( updatedModel2, cmd2 ) =
-                        update (JoinGameChannel id) model
+                        update (JoinGameChannel id) updatedModel
+
+                    commands =
+                        cmd2 :: commands
                 in
-                    ( { updatedModel2 | route = currentRoute }, cmd2 )
+                    ( { updatedModel2 | route = currentRoute }, Cmd.batch <| List.reverse commands )
 
             _ ->
                 let
-                    ( updatedModel, cmd ) =
+                    ( updatedModel2, cmd2 ) =
                         case model.route of
                             GameShowRoute id ->
                                 update (LeaveGameChannel id) model
 
                             _ ->
-                                update JoinLobbyChannel model
+                                ( updatedModel, Cmd.none )
+
+                    commands =
+                        cmd2 :: commands
                 in
-                    ( { updatedModel | route = currentRoute, connectedToLobby = True }, cmd )
+                    ( { updatedModel | route = currentRoute, connectedToLobby = True }, Cmd.batch <| List.reverse commands )
 
 
 main : Program Flags
