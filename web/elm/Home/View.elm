@@ -3,6 +3,7 @@ module Home.View exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
+import Array
 import Home.Model as HomeModel exposing (..)
 import Game.Model as GameModel exposing (..)
 import Msg exposing (..)
@@ -85,7 +86,7 @@ gameView game =
                     )
 
                 Just defender ->
-                    lastTurnView game
+                    statsView game
     in
         li
             []
@@ -94,16 +95,68 @@ gameView game =
             ]
 
 
+statsView : GameModel.Game -> Html Msg
+statsView game =
+    ul
+        [ class "stats-list" ]
+        [ lastTurnView game
+        , winnerView game
+        ]
+
+
 lastTurnView : GameModel.Game -> Html Msg
 lastTurnView game =
-    case List.head game.turns of
-        Nothing ->
-            text ""
+    if game.over then
+        div [] []
+    else
+        case List.head game.turns of
+            Nothing ->
+                text ""
 
-        Just turn ->
-            ul
-                [ class "stats-list" ]
+            Just turn ->
+                let
+                    turnPlayer =
+                        turn.player_id
+
+                    player =
+                        if turnPlayer == Maybe.withDefault "" game.attacker then
+                            "Attacker"
+                        else
+                            "Defender"
+
+                    letters =
+                        [ "a", "b", "c", "d", "e", "f", "g", "h", "i", "j" ]
+                            |> Array.fromList
+
+                    coords =
+                        (Maybe.withDefault "" (Array.get turn.y letters)) ++ (toString (turn.x + 1))
+
+                    result =
+                        if turn.result == "*" then
+                            "a ship"
+                        else
+                            "water"
+                in
+                    li
+                        []
+                        [ text (player ++ " shoots " ++ coords ++ " hitting " ++ result) ]
+
+
+winnerView : GameModel.Game -> Html Msg
+winnerView game =
+    if (List.length game.turns > 0) && game.over then
+        let
+            player =
+                if game.winner == game.attacker then
+                    "Attacker"
+                else
+                    "Defender"
+        in
+            li
                 []
+                [ text (player ++ " wins!") ]
+    else
+        div [] []
 
 
 footerView : Html Msg
