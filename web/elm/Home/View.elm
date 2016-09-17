@@ -168,7 +168,7 @@ footerView =
                 [ text "@bigardone" ]
             ]
         , p []
-            [ a [ href "https://github.com/bigardone/phoenix-battleship", target "_blank" ]
+            [ a [ href "https://github.com/bigardone/phoenix-elm-battleship", target "_blank" ]
                 [ i [ attribute "className" "fa fa-github" ]
                     []
                 , text " source code"
