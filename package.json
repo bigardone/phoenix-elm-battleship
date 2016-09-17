@@ -28,5 +28,8 @@
     "redux-thunk": "^2.0.1",
     "stylus-brunch": "github:brunch/stylus-brunch",
     "uglify-js-brunch": "^2.0.1"
+  },
+  "devDependencies": {
+    "elm-brunch": "^0.7.0"
   }
 }

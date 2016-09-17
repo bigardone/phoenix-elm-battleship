@@ -17,20 +17,12 @@ defmodule Battleship.GameChannel do
       {:ok, pid} ->
         Process.monitor(pid)
 
+        send self, :after_join
+
         {:ok, assign(socket, :game_id, game_id)}
       {:error, reason} ->
         {:error, %{reason: reason}}
     end
-  end
-
-  def handle_in("game:joined", _message, socket) do
-    Logger.debug "Broadcasting player joined #{socket.assigns.game_id}"
-
-    player_id = socket.assigns.player_id
-    board = Board.get_opponents_data(player_id)
-
-    broadcast! socket, "game:player_joined", %{player_id: player_id, board: board}
-    {:noreply, socket}
   end
 
   def handle_in("game:get_data", _message, socket) do
@@ -85,14 +77,12 @@ defmodule Battleship.GameChannel do
     player_id = socket.assigns.player_id
     game_id = socket.assigns.game_id
 
-    game = Game.get_data(game_id)
-    opponent_id = Game.get_opponents_id(game, player_id)
-
     case Game.player_shot(game_id, player_id, x: x, y: y) do
       {:ok, %Game{over: true} = game} ->
         broadcast(socket, "game:over", %{game: game})
         {:noreply, socket}
-      {:ok, _game} ->
+      {:ok, game} ->
+        opponent_id = Game.get_opponents_id(game, player_id)
         broadcast(socket, "game:player:#{opponent_id}:set_game", %{game: Game.get_data(game_id, opponent_id)})
         {:reply, {:ok, %{game: Game.get_data(game_id, player_id)}}, socket}
       _ ->
@@ -101,7 +91,7 @@ defmodule Battleship.GameChannel do
   end
 
   def terminate(reason, socket) do
-    Logger.debug"Terminating GameChannel  #{socket.assigns.game_id} #{inspect reason}"
+    Logger.debug"Terminating GameChannel #{socket.assigns.game_id} #{inspect reason}"
 
     player_id = socket.assigns.player_id
     game_id = socket.assigns.game_id
@@ -120,6 +110,15 @@ defmodule Battleship.GameChannel do
     end
   end
 
+  def handle_info(:after_join, socket) do
+    Logger.debug "Broadcasting player joined #{socket.assigns.game_id}"
+
+    player_id = socket.assigns.player_id
+    board = Board.get_opponents_data(player_id)
+
+    broadcast! socket, "game:player_joined", %{player_id: player_id, board: board}
+    {:noreply, socket}
+  end
   def handle_info(_, socket), do: {:noreply, socket}
 
   def broadcast_stop(game_id) do
