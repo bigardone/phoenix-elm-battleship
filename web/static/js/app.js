@@ -4,5 +4,9 @@ const playerId = window.playerId;
 const elmDiv = document.querySelector('#main_container');
 
 if (elmDiv) {
-  Elm.Main.embed(elmDiv, { playerId: playerId });
+  const app = Elm.Main.embed(elmDiv, { playerId: playerId });
+
+  app.ports.setDocumentTitle.subscribe((title) => {
+    document.title = `${title} · Phoenix Battleship`;
+  });
 }
