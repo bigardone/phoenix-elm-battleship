@@ -514,7 +514,7 @@ update msg model =
 
 socketServer : String -> String
 socketServer playerId =
-    "ws://localhost:4000/socket/websocket?id=" ++ playerId
+    "ws://phoenix-elm-battleship.herokuapp.com/socket/websocket?id=" ++ playerId
 
 
 initPhxSocket : String -> Phoenix.Socket.Socket Msg
