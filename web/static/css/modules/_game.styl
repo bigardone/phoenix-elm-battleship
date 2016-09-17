@@ -43,6 +43,7 @@
       &.pointer
         .cell:not(.header):hover
           cursor: pointer
+          background: $light-green
 
       .row
         flex: 1
@@ -59,6 +60,10 @@
           justify-content: center
           border-radius: $base-border-radius
           overflow: hidden;
+
+          &.header
+            text-align: center
+            text-transform: uppercase
 
           &:not(.header)
             background: $light-blue
@@ -200,6 +205,7 @@
       vertical-align: middle
       background: $gray
       border-radius: 50%
+      margin-right: $small-spacing
 
       &.connected
         background: $green
@@ -240,7 +246,7 @@
     .form-container
       padding-top: $small-spacing
 
-      textarea
+      input
         width: 100%
 
   .instructions

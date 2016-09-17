@@ -33,3 +33,6 @@ config :logger, :console, format: "[$level] $message\n"
 # Do not configure such in production as keeping
 # and calculating stacktraces is usually expensive.
 config :phoenix, :stacktrace_depth, 20
+
+config :battleship,
+  ships_sizes: [2, 2]
