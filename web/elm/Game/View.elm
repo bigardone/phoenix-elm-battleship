@@ -93,7 +93,7 @@ resultView playerId model =
                     [ text message ]
                 , a
                     [ class "twitter-hashtag-button"
-                    , href ("https://twitter.com/intent/tweet?url=https://phoenix-battleship.herokuapp.com&button_hashtag=myelixirstatus&text=" ++ twitterMessage)
+                    , href ("https://twitter.com/intent/tweet?url=https://phoenix-elm-battleship.herokuapp.com&button_hashtag=myelixirstatus&text=" ++ twitterMessage)
                     ]
                     [ i
                         [ class "fa fa-twitter" ]
