@@ -55,7 +55,7 @@ headerView playerId model =
             else if isItPlayersTurn model.currentTurn playerId then
                 ( "Your turn!", "Click on your shooting grid to open fire!" )
             else if not (isItPlayersTurn model.currentTurn playerId) then
-                ( "Your turn!", "Click on your shooting grid to open fire!" )
+                ( "Your opponent's turn!", "Wait for your opponent to shoot..." )
             else
                 ( "Let the battle begin", "Let the battle begin" )
     in
