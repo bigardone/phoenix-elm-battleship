@@ -9,6 +9,7 @@ import Game.Model as GameModel
 
 type alias Model =
     { playerId : String
+    , baseUrl : String
     , phoenixSocket : Phoenix.Socket.Socket Msg
     , connectedToLobby : Bool
     , route : Routing.Route

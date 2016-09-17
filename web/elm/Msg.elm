@@ -6,7 +6,9 @@ import Game.Model exposing (..)
 
 
 type alias Flags =
-    { playerId : String }
+    { playerId : String
+    , baseUrl : String
+    }
 
 
 type Msg

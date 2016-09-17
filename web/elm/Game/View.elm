@@ -12,34 +12,34 @@ import Game.Helpers exposing (..)
 import Logo.View as Logo
 
 
-view : String -> String -> Model -> Html Msg
-view playerId messageText model =
+view : String -> String -> String -> Model -> Html Msg
+view playerId messageText baseUrl model =
     div
         [ id "game_show"
         , class "view-container"
         ]
-        [ gameContent playerId model
+        [ gameContent playerId baseUrl model
         , chatView playerId messageText model
         ]
 
 
-gameContent : String -> Model -> Html Msg
-gameContent playerId model =
+gameContent : String -> String -> Model -> Html Msg
+gameContent playerId baseUrl model =
     if model.gameOver then
         resultView playerId model
     else
-        gameView playerId model
+        gameView playerId baseUrl model
 
 
-gameView : String -> Model -> Html Msg
-gameView playerId model =
+gameView : String -> String -> Model -> Html Msg
+gameView playerId baseUrl model =
     section
         [ id "main_section" ]
         [ headerView playerId model
         , section
             [ id "boards_container" ]
             [ MyBoardView.view model
-            , opponentBoard playerId model
+            , opponentBoard playerId baseUrl model
             ]
         ]
 
@@ -107,16 +107,16 @@ resultView playerId model =
             ]
 
 
-opponentBoard : String -> Model -> Html Msg
-opponentBoard playerId model =
+opponentBoard : String -> String -> Model -> Html Msg
+opponentBoard playerId baseUrl model =
     if model.readyForBattle == False then
-        instructionsView playerId model
+        instructionsView playerId baseUrl model
     else
         OpponentBoardView.view playerId model
 
 
-instructionsView : String -> Model -> Html Msg
-instructionsView playerId model =
+instructionsView : String -> String -> Model -> Html Msg
+instructionsView playerId baseUrl model =
     let
         firstStep =
             if Maybe.withDefault "" model.game.attacker == playerId then
@@ -124,7 +124,11 @@ instructionsView playerId model =
                     [ text "Copy this link by clicking on it and share it with your opponent. "
                     , br []
                         []
-                    , text " "
+                    , input
+                        [ readonly True
+                        , value (baseUrl ++ "/game/" ++ (Maybe.withDefault "" model.game.id))
+                        ]
+                        []
                     ]
             else
                 span [] []

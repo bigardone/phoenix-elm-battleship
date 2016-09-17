@@ -19,14 +19,15 @@ init flags result =
             Routing.routeFromResult result
 
         model =
-            initialModel flags.playerId currentRoute
+            initialModel flags.playerId flags.baseUrl currentRoute
     in
         urlUpdate result model
 
 
-initialModel : String -> Routing.Route -> Model
-initialModel playerId route =
+initialModel : String -> String -> Routing.Route -> Model
+initialModel playerId baseUrl route =
     { playerId = playerId
+    , baseUrl = baseUrl
     , phoenixSocket = (initPhxSocket playerId)
     , connectedToLobby = False
     , route = route

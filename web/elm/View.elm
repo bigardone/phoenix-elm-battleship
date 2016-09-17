@@ -21,7 +21,7 @@ page : Model -> Html Msg
 page model =
     case model.route of
         GameShowRoute id ->
-            Game.View.view model.playerId model.messageText model.game
+            Game.View.view model.playerId model.messageText model.baseUrl model.game
 
         NotFoundRoute ->
             notFoundView
