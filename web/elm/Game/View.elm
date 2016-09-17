@@ -121,7 +121,7 @@ instructionsView playerId baseUrl model =
         firstStep =
             if Maybe.withDefault "" model.game.attacker == playerId then
                 li []
-                    [ text "Copy this link by clicking on it and share it with your opponent. "
+                    [ text "Copy this link and share it with your opponent."
                     , br []
                         []
                     , input
