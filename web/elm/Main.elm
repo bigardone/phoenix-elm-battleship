@@ -9,6 +9,7 @@ import Game.Model as GameModel
 import Update exposing (..)
 import Msg exposing (Msg(..), Flags)
 import Routing exposing (..)
+import Ports exposing (..)
 
 
 init : Flags -> Result String Route -> ( Model, Cmd Msg )
@@ -49,8 +50,11 @@ urlUpdate result model =
         ( updatedModel, joinGameChannelCmd ) =
             update JoinLobbyChannel model
 
+        title =
+            routeTitle currentRoute
+
         commands =
-            [ joinGameChannelCmd ]
+            [ joinGameChannelCmd, setDocumentTitle title ]
     in
         case currentRoute of
             GameShowRoute id ->

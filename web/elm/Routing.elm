@@ -57,3 +57,19 @@ routeFromResult result =
 
         Err string ->
             NotFoundRoute
+
+
+routeTitle : Route -> String
+routeTitle route =
+    case route of
+        HomeIndexRoute ->
+            "Ahoy, Matey!"
+
+        GameShowRoute id ->
+            id
+
+        GameErrorRoute ->
+            "Blow me down, game error!"
+
+        NotFoundRoute ->
+            "Yo Ho Ho, game not found!"
