@@ -14,13 +14,18 @@ import Logo.View as Logo
 
 view : String -> String -> String -> Model -> Html Msg
 view playerId messageText baseUrl model =
-    div
-        [ id "game_show"
-        , class "view-container"
-        ]
-        [ gameContent playerId baseUrl model
-        , chatView playerId messageText model
-        ]
+    case model.game.id of
+        Just gameId ->
+            div
+                [ id "game_show"
+                , class "view-container"
+                ]
+                [ gameContent playerId baseUrl model
+                , chatView playerId messageText model
+                ]
+
+        Nothing ->
+            div [] []
 
 
 gameContent : String -> String -> Model -> Html Msg
