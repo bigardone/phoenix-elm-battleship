@@ -12,8 +12,10 @@
     flex-direction: column
 
   #game_header
+    animation(bounce)
     padding: $base-spacing * 1.5
     text-align: center
+    transform-origin: center bottom
 
     h1
       margin-bottom: .5em
@@ -101,7 +103,8 @@
           > .cell:not(.header)
             border-bottom-width: 3px
 
-    #opponents_board_container
+    #opponents_board_container, #instructions_container
+      animation(fadeInRight)
       flex: 1
       flex-direction: column
       padding: $small-spacing
@@ -119,6 +122,7 @@
         text-align: right
 
     #my_board_container
+      animation(fadeInLeft)
       flex: 1
       flex-direction: column
       max-width: 50%
@@ -229,6 +233,7 @@
           margin-bottom: ($small-spacing / 2)
 
           span
+            animation(bounceInLeft)
             display: inline-block
             background: rgba($light-blue, .5)
             border-radius: $base-border-radius
@@ -240,6 +245,7 @@
             text-align: right
 
             span
+              animation(bounceInRight)
               background: rgba($light-green, .5)
 
 
