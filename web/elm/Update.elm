@@ -521,6 +521,5 @@ initPhxSocket : String -> Phoenix.Socket.Socket Msg
 initPhxSocket playerId =
     socketServer playerId
         |> Phoenix.Socket.init
-        |> Phoenix.Socket.withDebug
         |> Phoenix.Socket.withHeartbeatInterval 60
         |> Phoenix.Socket.on "update_games" "lobby" ReceiveCurrentGames
