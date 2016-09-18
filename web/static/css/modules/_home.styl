@@ -7,6 +7,7 @@
     padding: ($base-spacing * 2) 0
 
   h1
+    animation(zoomInDown)
     font-size: 3em
     line-height: 1.5em
     color: $dark-purple
@@ -18,13 +19,14 @@
 
   .current-games
     list-style: none
-    background: $light-gray
     border-radius: $base-border-radius
     text-align: left
     padding: 0
     overflow: hidden
 
     > li
+      animation(fadeIn)
+      background: $light-gray
       padding: $small-spacing
       display: flex
       align-items: center

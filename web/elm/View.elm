@@ -36,7 +36,7 @@ page model =
 notFoundView : Html Msg
 notFoundView =
     div
-        [ id "not_found"
+        [ id "game_error_container"
         , class "view-container"
         ]
         [ LogoView.view
@@ -58,7 +58,7 @@ notFoundView =
 gameErrorView : Html Msg
 gameErrorView =
     div
-        [ id "not_found"
+        [ id "game_error_container"
         , class "view-container"
         ]
         [ LogoView.view
