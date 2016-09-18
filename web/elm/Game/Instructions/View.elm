@@ -24,7 +24,7 @@ view playerId baseUrl model =
             else
                 span [] []
     in
-        div [ id "opponents_board_container" ]
+        div [ id "instructions_container" ]
             [ header
                 []
                 [ h2 [] [ text "Instructions" ]
