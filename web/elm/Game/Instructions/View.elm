@@ -42,7 +42,7 @@ view playerId baseUrl model =
                 , li []
                     [ text "Repeat the process until you place all your ships." ]
                 , li []
-                    [ text "Tha battle will start as soon as both players have placed all their ships." ]
+                    [ text "The battle will start as soon as both players have placed all their ships." ]
                 , li []
                     [ text "Good luck!" ]
                 ]
