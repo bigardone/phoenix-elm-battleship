@@ -24,7 +24,7 @@ view playerId messageText model =
             if opponentIsConnected == True then
                 "Opponent is connected"
             else
-                "No opponnent yet connected"
+                "No opponent yet connected"
 
         classes =
             classList [ ( "status", True ), ( "connected", opponentIsConnected ) ]
@@ -53,7 +53,7 @@ view playerId messageText model =
                         , autofocus True
                         , onInput SetMessageText
                         , on "keypress" handleKeyPress
-                        , placeholder "Type message and hit intro..."
+                        , placeholder "Type message and hit enter..."
                         , value messageText
                         ]
                         []
